@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深圳市BIM统一门户平台 - 使用者门户</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 统一配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0052D9',
+                        secondary: '#0078D4',
+                        accent: '#00B4D8',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        gray: {
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style>
+        .content-auto {
+            content-visibility: auto;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .transition-all-300 {
+            transition: all 300ms ease-in-out;
+        }
+        .bg-gradient-blue {
+            background: linear-gradient(135deg, #0052D9 0%, #0078D4 100%);
+        }
+        .card-hover {
+            transition: all 300ms ease-in-out;
+        }
+        .card-hover:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            color: #64748B;
+            transition: all 300ms ease-in-out;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(0, 82, 217, 0.1);
+            color: #0052D9;
+        }
+        .sidebar-item.active {
+            background-color: rgba(0, 82, 217, 0.1);
+            color: #0052D9;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <!-- 顶部信息条 -->
+    <div class="bg-dark text-white py-2">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span class="font-semibold">深圳市BIM统一门户平台</span>
+                <span class="text-gray-400 text-sm" id="current-date"></span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="login.html" class="text-sm hover:text-accent transition-all-300">退出登录</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">联系我们</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">常见问题</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">English</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                <!-- 平台标识 -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fa fa-building text-white text-sm"></i>
+                    </div>
+                    <h1 class="text-lg font-bold text-dark">深圳市BIM开放平台 | 使用者门户</h1>
+                </div>
+
+                <!-- 主导航菜单 -->
+                <nav class="flex space-x-6">
+                    <a href="userportal-homepage.html" class="text-primary font-medium border-b-2 border-primary py-3">平台首页</a>
+                    <a href="userportal-data-service.html" class="text-gray-700 hover:text-primary py-3">数据服务</a>
+                    <a href="userportal-capability-service.html" class="text-gray-700 hover:text-primary py-3">能力服务</a>
+                    <a href="#" class="text-gray-700 hover:text-primary py-3">应用服务</a>
+                    <a href="userportal-bim-tools.html" class="text-gray-700 hover:text-primary py-3">BIM工具</a>
+                    <a href="userportal-task-list.html" class="text-gray-700 hover:text-primary py-3">任务列表</a>
+                    <a href="userportal-form-list.html" class="text-gray-700 hover:text-primary py-3">表单列表</a>
+                    <a href="userportal-model-list.html" class="text-gray-700 hover:text-primary py-3">模型列表</a>
+                </nav>
+
+                <!-- 右侧用户信息 -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <select class="bg-white border border-gray-300 rounded-md px-3 py-1 text-sm" onchange="switchPortal(this.value)">
+                            <option value="user">使用者门户</option>
+                            <option value="admin">管理者门户</option>
+                            <option value="developer">开发者门户</option>
+                        </select>
+                    </div>
+                    <button class="text-gray-700 hover:text-primary">
+                        <i class="fa fa-question-circle text-xl"></i>
+                    </button>
+                    <div class="relative">
+                        <button class="text-gray-700 hover:text-primary">
+                            <i class="fa fa-envelope text-xl"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">1</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                            <i class="fa fa-user text-gray-500"></i>
+                        </div>
+                        <span class="text-gray-700">用户</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体内容区 -->
+    <main class="flex-grow flex">
+        <!-- 左侧菜单栏 -->
+        <aside class="w-64 bg-white shadow-md flex-shrink-0">
+            <div class="p-4">
+                <!-- 资源管理 -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-medium text-gray-900 flex items-center">
+                            <i class="fa fa-folder mr-2"></i>
+                            资源管理
+                        </span>
+                        <i class="fa fa-chevron-down text-gray-400"></i>
+                    </div>
+                    <ul class="ml-6 space-y-1">
+                        <li><a href="#" class="sidebar-item">我的资源</a></li>
+                        <li><a href="#" class="sidebar-item">购物车</a></li>
+                    </ul>
+                </div>
+
+                <!-- 单位用户信息 -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-medium text-gray-900 flex items-center">
+                            <i class="fa fa-building-o mr-2"></i>
+                            单位用户信息
+                        </span>
+                        <i class="fa fa-chevron-down text-gray-400"></i>
+                    </div>
+                    <ul class="ml-6 space-y-1">
+                        <li><a href="#" class="sidebar-item">单位信息</a></li>
+                        <li><a href="#" class="sidebar-item active">项目信息</a></li>
+                        <li><a href="#" class="sidebar-item">成员管理</a></li>
+                        <li><a href="#" class="sidebar-item">统计分析</a></li>
+                    </ul>
+                </div>
+
+                <!-- 个人用户信息 -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-medium text-gray-900 flex items-center">
+                            <i class="fa fa-user mr-2"></i>
+                            个人用户信息
+                        </span>
+                        <i class="fa fa-chevron-down text-gray-400"></i>
+                    </div>
+                    <ul class="ml-6 space-y-1">
+                        <li><a href="#" class="sidebar-item">个人信息</a></li>
+                        <li><a href="#" class="sidebar-item">个人档案</a></li>
+                        <li><a href="#" class="sidebar-item">收藏管理</a></li>
+                        <li><a href="#" class="sidebar-item">消息中心</a></li>
+                        <li><a href="#" class="sidebar-item">个性化配置</a></li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 右侧内容区 -->
+        <div class="flex-grow p-6">
+            <!-- 面包屑导航 -->
+            <div class="mb-6 text-sm text-gray-600">
+                这是二级功能 > 这是当前页面
+            </div>
+
+            <!-- 项目信息标题 -->
+            <h2 class="text-xl font-bold text-dark mb-6">项目信息</h2>
+
+            <!-- 搜索栏 -->
+            <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+                <div class="flex flex-wrap items-center gap-4">
+                    <div>
+                        <input type="text" placeholder="请输入项目名称" class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div>
+                        <select class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <option>请选择状态</option>
+                            <option>申请中</option>
+                            <option>已通过</option>
+                            <option>已拒绝</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-all-300">
+                            查询
+                        </button>
+                    </div>
+                    <div>
+                        <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-all-300">
+                            重置
+                        </button>
+                    </div>
+                    <div class="ml-auto">
+                        <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-all-300">
+                            新增项目
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 项目列表表格 -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">序号</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目名称</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">应用系统</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目状态</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">是否启用</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">更新时间</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">这是项目名称</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">这是系统名称</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">申请中</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <label class="relative inline-block w-12 h-6">
+                                    <input type="checkbox" checked class="opacity-0 w-0 h-0">
+                                    <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 transition-all duration-300 rounded-full"></span>
+                                    <span class="absolute content-[''] h-5 w-5 left-0.5 bottom-0.5 bg-white transition-all duration-300 rounded-full"></span>
+                                </label>
+                                <style>
+                                    input:checked + span:first-of-type {
+                                        background-color: #0052D9;
+                                    }
+                                    input:checked + span:first-of-type + span {
+                                        transform: translateX(24px);
+                                    }
+                                </style>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2026-1-23 15:20:39</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">项目配置</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">这是项目名称</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">这是系统名称</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">已通过</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <label class="relative inline-block w-12 h-6">
+                                    <input type="checkbox" checked class="opacity-0 w-0 h-0">
+                                    <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 transition-all duration-300 rounded-full"></span>
+                                    <span class="absolute content-[''] h-5 w-5 left-0.5 bottom-0.5 bg-white transition-all duration-300 rounded-full"></span>
+                                </label>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2026-1-23 15:20:39</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">项目配置</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">这是项目名称</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">这是系统名称</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">已通过</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <label class="relative inline-block w-12 h-6">
+                                    <input type="checkbox" checked class="opacity-0 w-0 h-0">
+                                    <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 transition-all duration-300 rounded-full"></span>
+                                    <span class="absolute content-[''] h-5 w-5 left-0.5 bottom-0.5 bg-white transition-all duration-300 rounded-full"></span>
+                                </label>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2026-1-23 15:20:39</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">项目配置</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">4</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">这是项目名称</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">这是系统名称</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">已通过</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <label class="relative inline-block w-12 h-6">
+                                    <input type="checkbox" checked class="opacity-0 w-0 h-0">
+                                    <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 transition-all duration-300 rounded-full"></span>
+                                    <span class="absolute content-[''] h-5 w-5 left-0.5 bottom-0.5 bg-white transition-all duration-300 rounded-full"></span>
+                                </label>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2026-1-23 15:20:39</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">项目配置</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页 -->
+            <div class="flex items-center justify-between mt-6">
+                <div class="text-sm text-gray-600">
+                    共 658 项数据
+                </div>
+                <div class="flex items-center space-x-1">
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">
+                        <i class="fa fa-angle-left"></i>
+                    </button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">1</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">...</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">50</button>
+                    <button class="px-3 py-1 border border-primary bg-primary text-white rounded-md">51</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md bg-gray-50 text-gray-900">52</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">53</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">54</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">...</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">90</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">
+                        <i class="fa fa-angle-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚区 -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm">© 2026 深圳市BIM统一门户平台 版权所有</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 设置当前日期
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('zh-CN', options);
+        });
+
+        // 切换门户
+        function switchPortal(value) {
+            if (value === 'admin') {
+                window.location.href = 'adminportal-homepage.html';
+            } else if (value === 'user') {
+                window.location.href = 'userportal-homepage.html';
+            } else if (value === 'developer') {
+                window.location.href = 'developerportal-homepage.html';
+            }
+        }
+    </script>
+</body>
+</html>

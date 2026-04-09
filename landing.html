@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深圳市BIM统一门户平台</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- 统一配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0052D9',
+                        secondary: '#0078D4',
+                        accent: '#00B4D8',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        gray: {
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style>
+        .content-auto {
+            content-visibility: auto;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .transition-all-300 {
+            transition: all 300ms ease-in-out;
+        }
+        .bg-gradient-blue {
+            background: linear-gradient(135deg, #0052D9 0%, #0078D4 100%);
+        }
+        .card-hover {
+            transition: all 300ms ease-in-out;
+        }
+        .card-hover:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- 顶部信息条 -->
+    <div class="bg-dark text-white py-2">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span class="font-semibold">深圳市BIM统一门户平台</span>
+                <span class="text-gray-400 text-sm" id="current-date"></span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="login.html" class="text-sm hover:text-accent transition-all-300">登录</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">注册</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">联系我们</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">常见问题</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">网站地图</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">无障碍</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">English</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部主导航区 -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fa fa-building text-white text-xl"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-dark">深圳市BIM统一门户平台</h1>
+                </div>
+
+                <!-- 主导航菜单 -->
+                <nav class="hidden md:flex space-x-8">
+                    <!-- 平台概述 -->
+                    <div class="relative group">
+                        <a href="#" class="text-gray-700 hover:text-primary font-medium flex items-center">
+                            平台概述
+                            <i class="fa fa-caret-down ml-1 text-xs"></i>
+                        </a>
+                        <div class="absolute top-full left-0 w-48 bg-white shadow-lg rounded-md py-2 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">平台介绍</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">平台定位与使命</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">服务内容</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">建设背景</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">平台价值</a>
+                        </div>
+                    </div>
+
+                    <!-- 能力中心 -->
+                    <div class="relative group">
+                        <a href="#" class="text-gray-700 hover:text-primary font-medium flex items-center">
+                            能力中心
+                            <i class="fa fa-caret-down ml-1 text-xs"></i>
+                        </a>
+                        <div class="absolute top-full left-0 w-64 bg-white shadow-lg rounded-md py-2 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                            <div class="px-4 py-2 font-medium text-gray-900 border-b border-gray-100">SZIFC转换</div>
+                            <a href="#" class="block px-6 py-2 text-gray-700 hover:bg-gray-100">功能介绍</a>
+                            <a href="#" class="block px-6 py-2 text-gray-700 hover:bg-gray-100">入门指南</a>
+                            <a href="#" class="block px-6 py-2 text-gray-700 hover:bg-gray-100">转换工具</a>
+                            <div class="px-4 py-2 font-medium text-gray-900 border-b border-gray-100 mt-2">SZIFC质检</div>
+                            <a href="#" class="block px-6 py-2 text-gray-700 hover:bg-gray-100">功能介绍</a>
+                            <a href="#" class="block px-6 py-2 text-gray-700 hover:bg-gray-100">入门指南</a>
+                            <a href="#" class="block px-6 py-2 text-gray-700 hover:bg-gray-100">质检工具</a>
+                            <a href="#" class="block px-6 py-2 text-gray-700 hover:bg-gray-100">质检说明</a>
+                            <a href="#" class="block px-6 py-2 text-gray-700 hover:bg-gray-100">建模手册</a>
+                            <a href="#" class="block px-6 py-2 text-gray-700 hover:bg-gray-100">良好实践</a>
+                        </div>
+                    </div>
+
+                    <!-- 资源中心 -->
+                    <div class="relative group">
+                        <a href="#" class="text-gray-700 hover:text-primary font-medium flex items-center">
+                            资源中心
+                            <i class="fa fa-caret-down ml-1 text-xs"></i>
+                        </a>
+                        <div class="absolute top-full left-0 w-48 bg-white shadow-lg rounded-md py-2 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">BIM模型资源</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">BIM基础通用能力</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">过往活动</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">培训与资金支持</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">认证企业 / 会员企业</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">行业专家资源</a>
+                        </div>
+                    </div>
+
+                    <!-- 通知与活动 -->
+                    <div class="relative group">
+                        <a href="#" class="text-gray-700 hover:text-primary font-medium flex items-center">
+                            通知与活动
+                            <i class="fa fa-caret-down ml-1 text-xs"></i>
+                        </a>
+                        <div class="absolute top-full left-0 w-48 bg-white shadow-lg rounded-md py-2 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">通知公告</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">活动信息</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">关键更新</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">上新速递</a>
+                        </div>
+                    </div>
+
+                    <!-- 帮助与支持 -->
+                    <div class="relative group">
+                        <a href="#" class="text-gray-700 hover:text-primary font-medium flex items-center">
+                            帮助与支持
+                            <i class="fa fa-caret-down ml-1 text-xs"></i>
+                        </a>
+                        <div class="absolute top-full left-0 w-48 bg-white shadow-lg rounded-md py-2 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">新手指南</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">常见问题</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">使用手册</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">联系我们</a>
+                        </div>
+                    </div>
+
+                    <!-- 门户入口 -->
+                    <div class="relative group">
+                        <a href="#" class="text-gray-700 hover:text-primary font-medium flex items-center">
+                            门户入口
+                            <i class="fa fa-caret-down ml-1 text-xs"></i>
+                        </a>
+                        <div class="absolute top-full left-0 w-48 bg-white shadow-lg rounded-md py-2 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                            <a href="userportal-homepage-new.html" target="_blank" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">使用者门户</a>
+                            <a href="adminportal-homepage.html" target="_blank" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">管理者门户</a>
+                            <a href="developerportal-homepage.html" target="_blank" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">开发者门户</a>
+                            <a href="sharedportal-homepage.html" target="_blank" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">共享共建门户</a>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- 搜索框 -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="搜索..." class="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <!-- 消息通知 -->
+                    <div class="relative">
+                        <button class="text-gray-700 hover:text-primary">
+                            <i class="fa fa-bell text-xl"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                        </button>
+                    </div>
+                    <!-- 移动端菜单按钮 -->
+                    <button class="md:hidden text-gray-700" id="mobile-menu-button">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 移动端菜单 -->
+        <div class="md:hidden bg-white shadow-lg absolute w-full left-0 top-full z-50 hidden" id="mobile-menu">
+            <div class="container mx-auto px-4 py-4 space-y-4">
+                <div class="relative">
+                    <input type="text" placeholder="搜索..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+                <div class="space-y-2">
+                    <a href="#" class="block py-2 text-gray-700 hover:text-primary font-medium">平台概述</a>
+                    <a href="#" class="block py-2 text-gray-700 hover:text-primary font-medium">能力中心</a>
+                    <a href="#" class="block py-2 text-gray-700 hover:text-primary font-medium">资源中心</a>
+                    <a href="#" class="block py-2 text-gray-700 hover:text-primary font-medium">通知与活动</a>
+                    <a href="#" class="block py-2 text-gray-700 hover:text-primary font-medium">帮助与支持</a>
+                    <a href="#" class="block py-2 text-gray-700 hover:text-primary font-medium">门户入口</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 首屏Banner / 平台介绍区 -->
+    <section class="bg-gradient-blue text-white py-20">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4 text-shadow">深圳市BIM统一门户平台</h1>
+                    <p class="text-xl mb-6">统一服务入口 / 促进信息共享 / 提升用户体验 / 支撑工程项目全生命周期BIM应用</p>
+                    <p class="text-gray-200 mb-8 max-w-lg">
+                        深圳市BIM统一门户平台是面向全市工程项目全生命周期的综合性BIM服务平台，旨在为政府、行业、平台使用者、管理者和开发者提供统一的BIM应用服务入口，促进信息共享，提升用户体验，支撑工程项目全生命周期BIM应用。
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#" class="bg-white text-primary font-medium px-6 py-3 rounded-md hover:bg-gray-100 transition-all-300">
+                            进入平台
+                        </a>
+                        <a href="#" class="bg-transparent border-2 border-white text-white font-medium px-6 py-3 rounded-md hover:bg-white hover:text-primary transition-all-300">
+                            查看平台概述
+                        </a>
+                        <a href="#" class="bg-transparent border-2 border-white text-white font-medium px-6 py-3 rounded-md hover:bg-white hover:text-primary transition-all-300">
+                            进入门户
+                        </a>
+                        <a href="#" class="bg-transparent border-2 border-white text-white font-medium px-6 py-3 rounded-md hover:bg-white hover:text-primary transition-all-300">
+                            查看帮助
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20architectural%20tech%20style%2C%20modern%20building%20facade%2C%20clean%20lines%2C%20blue%20color%20scheme%2C%20digital%20twin%20technology%2C%20professional%20government%20platform%20visual&image_size=landscape_16_9" alt="BIM平台能力示意图" class="w-full rounded-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 快速入口区 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-dark mb-8">快速入口</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- 使用者门户 -->
+                <a href="userportal-homepage-new.html" target="_blank" class="bg-gray-50 rounded-xl p-6 text-center card-hover">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-user text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900">使用者门户</h3>
+                </a>
+                <!-- 管理者门户 -->
+                <a href="adminportal-homepage.html" target="_blank" class="bg-gray-50 rounded-xl p-6 text-center card-hover">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-users text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900">管理者门户</h3>
+                </a>
+                <!-- 开发者门户 -->
+                <a href="developerportal-homepage.html" target="_blank" class="bg-gray-50 rounded-xl p-6 text-center card-hover">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-code text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900">开发者门户</h3>
+                </a>
+                <!-- 共享共建门户 -->
+                <a href="sharedportal-homepage.html" target="_blank" class="bg-gray-50 rounded-xl p-6 text-center card-hover">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-share-alt text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900">共享共建门户</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 平台概述与服务内容区 -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-dark mb-12 text-center">平台概述与服务内容</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-xl font-bold text-primary mb-4">平台定位</h3>
+                    <p class="text-gray-700 mb-6">
+                        深圳市BIM统一门户平台是面向全市工程项目全生命周期的综合性BIM服务平台，旨在为政府、行业、平台使用者、管理者和开发者提供统一的BIM应用服务入口。
+                    </p>
+                    <h3 class="text-xl font-bold text-primary mb-4">平台使命</h3>
+                    <p class="text-gray-700 mb-6">
+                        促进信息共享，提升用户体验，支撑工程项目全生命周期BIM应用，推动深圳市建筑业数字化转型。
+                    </p>
+                    <h3 class="text-xl font-bold text-primary mb-4">服务对象</h3>
+                    <ul class="list-disc list-inside text-gray-700 mb-6 space-y-2">
+                        <li>政府人员</li>
+                        <li>行业人员</li>
+                        <li>平台使用者</li>
+                        <li>管理者</li>
+                        <li>开发者</li>
+                    </ul>
+                    <h3 class="text-xl font-bold text-primary mb-4">服务内容</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2">
+                        <li>BIM模型资源管理</li>
+                        <li>SZIFC转换与质检</li>
+                        <li>数据资源共享</li>
+                        <li>行业培训与支持</li>
+                        <li>通知公告与活动管理</li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-bold text-primary mb-4">平台价值</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fa fa-line-chart text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-2">提升效率</h4>
+                                <p class="text-gray-700">通过统一的服务入口和标准化流程，提高工程项目全生命周期的管理效率。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fa fa-database text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-2">信息共享</h4>
+                                <p class="text-gray-700">打破信息孤岛，促进各参与方之间的信息共享与协同。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fa fa-cogs text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-2">技术创新</h4>
+                                <p class="text-gray-700">整合最新的BIM技术和数字化工具，推动行业技术创新。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fa fa-handshake-o text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-2">生态构建</h4>
+                                <p class="text-gray-700">构建开放的BIM生态系统，促进产学研用深度融合。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特色能力展示区 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-dark mb-8">特色能力展示</h2>
+            
+            <!-- 上新能力展示 -->
+            <div class="mb-12">
+                <h3 class="text-xl font-bold text-primary mb-6 flex items-center">
+                    <i class="fa fa-rocket mr-2"></i>
+                    上新能力展示
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                                <i class="fa fa-eye text-primary text-xl"></i>
+                            </div>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">最新</span>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-2">最新三维可视化技术</h4>
+                        <p class="text-gray-700 mb-4">支持实时渲染、交互式浏览和沉浸式体验，提升BIM模型的可视化效果。</p>
+                        <a href="#" class="text-primary hover:underline flex items-center">
+                            了解更多
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                                <i class="fa fa-bar-chart text-primary text-xl"></i>
+                            </div>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">最新</span>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-2">实时数据分析工具</h4>
+                        <p class="text-gray-700 mb-4">提供多维度数据分析和可视化报表，支持决策制定和项目管理。</p>
+                        <a href="#" class="text-primary hover:underline flex items-center">
+                            了解更多
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                                <i class="fa fa-lightbulb-o text-primary text-xl"></i>
+                            </div>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">最新</span>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-2">智能化设计辅助算法</h4>
+                        <p class="text-gray-700 mb-4">基于AI技术的设计辅助工具，提供智能优化建议和自动生成方案。</p>
+                        <a href="#" class="text-primary hover:underline flex items-center">
+                            了解更多
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 关键更新速递 -->
+            <div class="mb-12">
+                <h3 class="text-xl font-bold text-primary mb-6 flex items-center">
+                    <i class="fa fa-refresh mr-2"></i>
+                    关键更新速递
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                        <h4 class="font-medium text-gray-900 mb-2">性能优化</h4>
+                        <p class="text-gray-700 mb-4">提升平台响应速度和处理能力，优化大数据量模型的加载和渲染性能。</p>
+                        <a href="#" class="text-primary hover:underline flex items-center">
+                            了解更多
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                        <h4 class="font-medium text-gray-900 mb-2">安全增强</h4>
+                        <p class="text-gray-700 mb-4">加强平台安全防护，提升数据加密和访问控制能力，保障用户数据安全。</p>
+                        <a href="#" class="text-primary hover:underline flex items-center">
+                            了解更多
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                        <h4 class="font-medium text-gray-900 mb-2">用户界面改进</h4>
+                        <p class="text-gray-700 mb-4">优化用户界面设计，提升操作体验，增加响应式适配能力。</p>
+                        <a href="#" class="text-primary hover:underline flex items-center">
+                            了解更多
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                        <h4 class="font-medium text-gray-900 mb-2">系统升级说明</h4>
+                        <p class="text-gray-700 mb-4">平台系统版本升级，新增功能和改进，提升整体性能和稳定性。</p>
+                        <a href="#" class="text-primary hover:underline flex items-center">
+                            了解更多
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 上新数据资源 -->
+            <div>
+                <h3 class="text-xl font-bold text-primary mb-6 flex items-center">
+                    <i class="fa fa-database mr-2"></i>
+                    上新数据资源
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                        <h4 class="font-medium text-gray-900 mb-2">新加入的高质量BIM模型</h4>
+                        <p class="text-gray-700 mb-4">新增多个行业领域的高质量BIM模型，涵盖建筑、市政、交通等多个领域。</p>
+                        <a href="#" class="text-primary hover:underline flex items-center">
+                            了解更多
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                        <h4 class="font-medium text-gray-900 mb-2">BIM基础通用能力</h4>
+                        <p class="text-gray-700 mb-4">提供标准化的BIM基础通用能力，包括模型检查、碰撞检测、工程量计算等。</p>
+                        <a href="#" class="text-primary hover:underline flex items-center">
+                            了解更多
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                        <h4 class="font-medium text-gray-900 mb-2">权威数据说明</h4>
+                        <p class="text-gray-700 mb-4">提供权威的BIM数据标准和规范说明，指导用户正确使用和管理BIM数据。</p>
+                        <a href="#" class="text-primary hover:underline flex items-center">
+                            了解更多
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 场景指引区 -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-dark mb-12 text-center">场景指引</h2>
+            
+            <!-- 开放门户平台操作流程 -->
+            <div class="mb-16">
+                <h3 class="text-xl font-bold text-primary mb-8 text-center">开放门户平台操作流程</h3>
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex flex-col items-center mb-8 md:mb-0">
+                        <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-sign-in text-white text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-2">登录门户</h4>
+                        <p class="text-gray-700 text-center max-w-xs">使用账号密码登录平台，或通过统一身份认证登录。</p>
+                    </div>
+                    <div class="hidden md:block text-gray-400">
+                        <i class="fa fa-long-arrow-right text-2xl"></i>
+                    </div>
+                    <div class="block md:hidden text-gray-400 mb-4">
+                        <i class="fa fa-long-arrow-down text-2xl"></i>
+                    </div>
+                    <div class="flex flex-col items-center mb-8 md:mb-0">
+                        <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-desktop text-white text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-2">浏览项目概览</h4>
+                        <p class="text-gray-700 text-center max-w-xs">查看项目基本信息、进度和相关文档。</p>
+                    </div>
+                    <div class="hidden md:block text-gray-400">
+                        <i class="fa fa-long-arrow-right text-2xl"></i>
+                    </div>
+                    <div class="block md:hidden text-gray-400 mb-4">
+                        <i class="fa fa-long-arrow-down text-2xl"></i>
+                    </div>
+                    <div class="flex flex-col items-center mb-8 md:mb-0">
+                        <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-star text-white text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-2">访问特色功能</h4>
+                        <p class="text-gray-700 text-center max-w-xs">使用平台提供的特色功能，如SZIFC转换、质检等。</p>
+                    </div>
+                    <div class="hidden md:block text-gray-400">
+                        <i class="fa fa-long-arrow-right text-2xl"></i>
+                    </div>
+                    <div class="block md:hidden text-gray-400 mb-4">
+                        <i class="fa fa-long-arrow-down text-2xl"></i>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-check-circle text-white text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-2">完成特定任务</h4>
+                        <p class="text-gray-700 text-center max-w-xs">完成模型上传、数据分析请求等特定任务。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 门户角色导航 -->
+            <div>
+                <h3 class="text-xl font-bold text-primary mb-8 text-center">门户角色导航</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-users text-primary text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-4">管理者</h4>
+                        <ul class="list-disc list-inside text-gray-700 mb-6 space-y-2">
+                            <li>项目管理</li>
+                            <li>用户权限管理</li>
+                            <li>数据统计分析</li>
+                            <li>系统配置</li>
+                        </ul>
+                        <a href="adminportal-homepage.html" target="_blank" class="bg-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary/90 transition-all-300">
+                            进入管理者门户
+                        </a>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-user text-primary text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-4">使用者</h4>
+                        <ul class="list-disc list-inside text-gray-700 mb-6 space-y-2">
+                            <li>模型浏览</li>
+                            <li>数据分析</li>
+                            <li>文件管理</li>
+                            <li>协作沟通</li>
+                        </ul>
+                        <a href="userportal-homepage-new.html" target="_blank" class="bg-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary/90 transition-all-300">
+                            进入使用者门户
+                        </a>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-code text-primary text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-4">开发者</h4>
+                        <ul class="list-disc list-inside text-gray-700 mb-6 space-y-2">
+                            <li>API文档</li>
+                            <li>开发工具</li>
+                            <li>测试环境</li>
+                            <li>技术支持</li>
+                        </ul>
+                        <a href="developerportal-homepage.html" target="_blank" class="bg-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary/90 transition-all-300">
+                            进入开发者门户
+                        </a>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-industry text-primary text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-4">行业用户</h4>
+                        <ul class="list-disc list-inside text-gray-700 mb-6 space-y-2">
+                            <li>行业资源</li>
+                            <li>培训信息</li>
+                            <li>案例分享</li>
+                            <li>政策解读</li>
+                        </ul>
+                        <a href="#" class="bg-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary/90 transition-all-300">
+                            进入行业门户
+                        </a>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-share-alt text-primary text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 mb-4">共享共建</h4>
+                        <ul class="list-disc list-inside text-gray-700 mb-6 space-y-2">
+                            <li>成果共享</li>
+                            <li>资源共建</li>
+                            <li>社区协作</li>
+                            <li>知识分享</li>
+                        </ul>
+                        <a href="sharedportal-homepage.html" target="_blank" class="bg-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary/90 transition-all-300">
+                            进入共享共建门户
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 资源与生态区 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-dark mb-12 text-center">资源与生态</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- 左侧：过往活动 -->
+                <div>
+                    <h3 class="text-xl font-bold text-primary mb-6">过往活动</h3>
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="w-24 h-24 bg-gray-200 rounded-md flex-shrink-0">
+                                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20architectural%20tech%20conference%2C%20professional%20event%2C%20clean%20modern%20design%2C%20blue%20color%20scheme&image_size=square" alt="活动图片" class="w-full h-full object-cover rounded-md">
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-2">2026年深圳市BIM技术应用研讨会</h4>
+                                <p class="text-gray-500 text-sm mb-2">2026-03-15</p>
+                                <p class="text-gray-700 mb-2">探讨BIM技术在工程项目全生命周期中的应用与发展趋势。</p>
+                                <a href="#" class="text-primary hover:underline text-sm">查看详情</a>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-24 h-24 bg-gray-200 rounded-md flex-shrink-0">
+                                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20architectural%20tech%20training%2C%20modern%20classroom%2C%20clean%20design%2C%20blue%20color%20scheme&image_size=square" alt="活动图片" class="w-full h-full object-cover rounded-md">
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-2">BIM模型质量控制培训</h4>
+                                <p class="text-gray-500 text-sm mb-2">2026-02-20</p>
+                                <p class="text-gray-700 mb-2">针对SZIFC质检工具的使用方法和最佳实践进行培训。</p>
+                                <a href="#" class="text-primary hover:underline text-sm">查看详情</a>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-24 h-24 bg-gray-200 rounded-md flex-shrink-0">
+                                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20architectural%20tech%20exhibition%2C%20modern%20display%2C%20clean%20design%2C%20blue%20color%20scheme&image_size=square" alt="活动图片" class="w-full h-full object-cover rounded-md">
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-2">深圳市BIM技术成果展示会</h4>
+                                <p class="text-gray-500 text-sm mb-2">2026-01-10</p>
+                                <p class="text-gray-700 mb-2">展示深圳市BIM技术应用的最新成果和案例。</p>
+                                <a href="#" class="text-primary hover:underline text-sm">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <a href="#" class="text-primary hover:underline flex items-center justify-center">
+                            查看更多活动
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 右侧：认证企业与合作生态 -->
+                <div>
+                    <h3 class="text-xl font-bold text-primary mb-6">认证企业与合作生态</h3>
+                    <div class="mb-8">
+                        <h4 class="font-medium text-gray-900 mb-4">认证企业</h4>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">企业A</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">企业B</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">企业C</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">企业D</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">企业E</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">企业F</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-4">合作生态单位</h4>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">高校A</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">研究院B</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">协会C</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">企业D</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">机构E</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-16">
+                                <span class="text-gray-600 font-medium">平台F</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 通知公告与活动区 -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-dark mb-12 text-center">通知公告与活动</h2>
+            
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex flex-wrap border-b border-gray-200 mb-6">
+                    <button class="px-4 py-2 text-primary border-b-2 border-primary font-medium">通知公告</button>
+                    <button class="px-4 py-2 text-gray-600 hover:text-primary">活动预告</button>
+                    <button class="px-4 py-2 text-gray-600 hover:text-primary">近期活动回顾</button>
+                    <button class="px-4 py-2 text-gray-600 hover:text-primary">关键更新</button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4 p-4 bg-blue-50 rounded-md">
+                        <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fa fa-bullhorn text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900 mb-2">关于开展2026年度深圳市BIM技术应用试点项目申报工作的通知</h4>
+                            <p class="text-gray-500 text-sm mb-2">2026-04-01</p>
+                            <p class="text-gray-700 mb-2">为进一步推动BIM技术在深圳市工程项目中的应用，现开展2026年度BIM技术应用试点项目申报工作。</p>
+                            <a href="#" class="text-primary hover:underline">查看详情</a>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 rounded-md">
+                        <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fa fa-bullhorn text-gray-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900 mb-2">深圳市BIM统一门户平台系统升级通知</h4>
+                            <p class="text-gray-500 text-sm mb-2">2026-03-20</p>
+                            <p class="text-gray-700 mb-2">平台将于2026年3月25日进行系统升级，升级期间平台将暂停服务。</p>
+                            <a href="#" class="text-primary hover:underline">查看详情</a>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 rounded-md">
+                        <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fa fa-bullhorn text-gray-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900 mb-2">关于举办2026年深圳市BIM技术应用研讨会的通知</h4>
+                            <p class="text-gray-500 text-sm mb-2">2026-03-10</p>
+                            <p class="text-gray-700 mb-2">为促进BIM技术在深圳市的应用与发展，兹定于2026年3月15日举办深圳市BIM技术应用研讨会。</p>
+                            <a href="#" class="text-primary hover:underline">查看详情</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <a href="#" class="text-primary hover:underline flex items-center justify-center">
+                        查看更多通知
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 帮助与支持区 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-dark mb-12 text-center">帮助与支持</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-book text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900 mb-4">新手指南</h3>
+                    <p class="text-gray-700 mb-6">为新用户提供平台使用的基本指南，帮助用户快速上手。</p>
+                    <a href="#" class="text-primary hover:underline flex items-center">
+                        查看指南
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-question-circle text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900 mb-4">常见问题</h3>
+                    <p class="text-gray-700 mb-6">解答用户在使用平台过程中常见的问题和疑惑。</p>
+                    <a href="#" class="text-primary hover:underline flex items-center">
+                        查看FAQ
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-6 card-hover">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-file-text text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900 mb-4">使用手册</h3>
+                    <p class="text-gray-700 mb-6">提供详细的平台功能使用手册，帮助用户全面了解平台功能。</p>
+                    <a href="#" class="text-primary hover:underline flex items-center">
+                        下载手册
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚区 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">平台介绍</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">平台定位与使命</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">服务内容</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">建设背景</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">平台价值</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">服务与支持</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">新手指南</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">常见问题</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">使用手册</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">联系我们</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">资源中心</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">BIM模型资源</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">培训与资金支持</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">认证企业</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">行业专家资源</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">联系方式</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center gap-2 text-gray-400">
+                            <i class="fa fa-map-marker"></i>
+                            <span>深圳市福田区福中三路市民中心</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-400">
+                            <i class="fa fa-phone"></i>
+                            <span>0755-12345678</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-400">
+                            <i class="fa fa-envelope"></i>
+                            <span>bim@sz.gov.cn</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center">
+                <p class="text-gray-400 mb-4">© 2026 深圳市BIM统一门户平台 版权所有</p>
+                <div class="flex justify-center space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition-all-300">隐私政策</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-all-300">使用条款</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-all-300">网站地图</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-all-300">常见问题</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 右侧悬浮辅助区 -->
+    <div class="fixed right-4 bottom-4 z-50">
+        <div class="flex flex-col gap-2">
+            <a href="#" class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary/90 transition-all-300">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            <a href="#" class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary/90 transition-all-300">
+                <i class="fa fa-envelope"></i>
+            </a>
+            <a href="#" class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary/90 transition-all-300">
+                <i class="fa fa-arrow-up"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 设置当前日期
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('zh-CN');
+        
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

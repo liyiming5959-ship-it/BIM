@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>统一登录 - 深圳市BIM统一门户平台</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 统一配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0052D9',
+                        secondary: '#0078D4',
+                        accent: '#00B4D8',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        gray: {
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style>
+        .content-auto {
+            content-visibility: auto;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .transition-all-300 {
+            transition: all 300ms ease-in-out;
+        }
+        .bg-gradient-blue {
+            background: linear-gradient(135deg, #0052D9 0%, #0078D4 100%);
+        }
+        .card-hover {
+            transition: all 300ms ease-in-out;
+        }
+        .card-hover:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <!-- 顶部区域 -->
+    <header class="bg-white shadow-sm py-4">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <!-- 平台标识 -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fa fa-building text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-dark">深圳市BIM统一门户平台</h1>
+                        <p class="text-sm text-gray-500">深圳市工程项目全生命周期BIM平台</p>
+                    </div>
+                </div>
+                <!-- 顶部链接 -->
+                <div class="flex items-center space-x-6">
+                    <a href="landing.html" class="text-gray-600 hover:text-primary transition-all-300">
+                        <i class="fa fa-home mr-1"></i> 返回首页
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-primary transition-all-300">
+                        <i class="fa fa-question-circle mr-1"></i> 帮助
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体登录区 -->
+    <main class="flex-grow flex items-center justify-center py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col lg:flex-row items-center justify-center gap-12">
+                <!-- 左侧品牌展示区 -->
+                <div class="lg:w-1/2 max-w-md">
+                    <div class="bg-white rounded-xl shadow-md p-8 flex flex-col items-center justify-center min-h-[500px]">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=flat%20design%20city%20buildings%2C%20BIM%20technology%2C%20construction%20cranes%2C%20bridges%2C%20blue%20color%20scheme%2C%20isometric%20style%2C%20minimalist%20government%20platform&image_size=landscape_16_9" alt="BIM平台登录背景" class="w-full max-w-md rounded-lg mb-6">
+                        <h2 class="text-2xl font-bold text-primary mb-2">深圳市BIM统一门户平台</h2>
+                        <p class="text-gray-600 text-center">
+                            统一服务入口 | 促进信息共享 | 提升用户体验
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 右侧登录区 -->
+                <div class="lg:w-1/3 w-full max-w-md">
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <!-- 登录标题区 -->
+                        <div class="mb-8">
+                            <h2 class="text-xl font-bold text-dark mb-6">用户登录</h2>
+                        </div>
+
+                        <!-- 登录表单 -->
+                        <div class="space-y-4">
+                            <div>
+                                <input type="text" id="username" placeholder="请输入内容" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <div class="relative">
+                                    <input type="password" id="password" placeholder="请输入密码" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <button type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600">
+                                        <i class="fa fa-eye-slash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex gap-3">
+                                    <input type="text" id="captcha" placeholder="请输入验证码" class="flex-grow px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <div class="w-32 h-12 bg-gray-100 rounded-md flex items-center justify-center">
+                                        <span class="text-gray-600 font-medium">8A7B</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="remember" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                    <label for="remember" class="ml-2 block text-sm text-gray-700">记住密码</label>
+                                </div>
+                                <a href="#" class="text-sm text-primary hover:underline">忘记密码</a>
+                            </div>
+                            <button type="button" class="w-full bg-primary text-white font-medium py-3 rounded-md hover:bg-primary/90 transition-all-300">
+                                登录
+                            </button>
+                        </div>
+
+                        <!-- 其他登录方式 -->
+                        <div class="mt-8">
+                            <div class="relative flex items-center justify-center">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-gray-200"></div>
+                                </div>
+                                <div class="relative flex justify-center text-sm">
+                                    <span class="px-2 bg-white text-gray-500">其他登录方式</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 grid grid-cols-3 gap-4">
+                                <button type="button" class="flex flex-col items-center justify-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-all-300">
+                                    <i class="fa fa-id-card text-primary text-xl mb-2"></i>
+                                    <span class="text-sm text-gray-600">市民认证登录</span>
+                                </button>
+                                <button type="button" class="flex flex-col items-center justify-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-all-300">
+                                    <i class="fa fa-weixin text-green-500 text-xl mb-2"></i>
+                                    <span class="text-sm text-gray-600">微信扫码</span>
+                                </button>
+                                <button type="button" class="flex flex-col items-center justify-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-all-300">
+                                    <i class="fa fa-mobile text-blue-500 text-xl mb-2"></i>
+                                    <span class="text-sm text-gray-600">粤省事</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚区 -->
+    <footer class="bg-dark text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">平台信息</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">关于平台</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">服务内容</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">技术支持</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">帮助与支持</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">常见问题</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">使用指南</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">联系我们</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">法律与安全</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">隐私政策</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">使用条款</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all-300">安全说明</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">联系方式</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center gap-2 text-gray-400">
+                            <i class="fa fa-map-marker"></i>
+                            <span>深圳市福田区福中三路市民中心</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-400">
+                            <i class="fa fa-phone"></i>
+                            <span>0755-12345678</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-400">
+                            <i class="fa fa-envelope"></i>
+                            <span>bim@sz.gov.cn</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-6 text-center">
+                <p class="text-gray-400 mb-4">© 2026 深圳市BIM统一门户平台 版权所有</p>
+                <p class="text-gray-500 text-sm">主办单位：深圳市住房和建设局 | 技术支持：深圳市建设科技促进中心</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 密码显示/隐藏
+        document.querySelector('.fa-eye-slash').parentElement.addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
+        });
+
+        // 登录按钮点击事件
+        document.querySelectorAll('button[type="button"]').forEach(button => {
+            if (button.textContent.trim() === '登录') {
+                button.addEventListener('click', function() {
+                    // 这里可以添加登录逻辑
+                    alert('登录成功，正在跳转...');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

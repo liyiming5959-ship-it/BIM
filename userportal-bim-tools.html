@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深圳市BIM统一门户平台 - BIM工具</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 统一配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0052D9',
+                        secondary: '#0078D4',
+                        accent: '#00B4D8',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        gray: {
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style>
+        .content-auto {
+            content-visibility: auto;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .transition-all-300 {
+            transition: all 300ms ease-in-out;
+        }
+        .bg-gradient-blue {
+            background: linear-gradient(135deg, #0052D9 0%, #0078D4 100%);
+        }
+        .card-hover {
+            transition: all 300ms ease-in-out;
+        }
+        .card-hover:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            color: #64748B;
+            transition: all 300ms ease-in-out;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(0, 82, 217, 0.1);
+            color: #0052D9;
+        }
+        .sidebar-item.active {
+            background-color: rgba(0, 82, 217, 0.1);
+            color: #0052D9;
+            font-weight: 500;
+        }
+        .bim-tools-header {
+            background: linear-gradient(135deg, #E6F0FF 0%, #F0F7FF 100%);
+        }
+        .tool-card {
+            border: 1px solid #E2E8F0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            transition: all 300ms ease-in-out;
+        }
+        .tool-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+        .tool-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #10B981;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+        }
+        .filter-checkbox {
+            display: flex;
+            align-items: center;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .filter-checkbox input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+        .filter-group label {
+            font-weight: 500;
+            margin-right: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <!-- 顶部信息条 -->
+    <div class="bg-dark text-white py-2">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span class="font-semibold">深圳市BIM统一门户平台</span>
+                <span class="text-gray-400 text-sm" id="current-date"></span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="login.html" class="text-sm hover:text-accent transition-all-300">退出登录</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">联系我们</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">常见问题</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">English</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                <!-- 平台标识 -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fa fa-building text-white text-sm"></i>
+                    </div>
+                    <h1 class="text-lg font-bold text-dark">深圳市BIM开放平台 | 使用者门户</h1>
+                </div>
+
+                <!-- 主导航菜单 -->
+                <nav class="flex space-x-6">
+                    <a href="userportal-homepage-new.html" class="text-gray-700 hover:text-primary py-3">平台首页</a>
+                    <a href="userportal-data-service.html" class="text-gray-700 hover:text-primary py-3">数据服务</a>
+                    <a href="userportal-capability-service.html" class="text-gray-700 hover:text-primary py-3">能力服务</a>
+                    <a href="#" class="text-gray-700 hover:text-primary py-3">应用服务</a>
+                    <a href="userportal-bim-tools.html" class="text-primary font-medium border-b-2 border-primary py-3">BIM工具</a>
+                    <a href="userportal-task-list.html" class="text-gray-700 hover:text-primary py-3">任务列表</a>
+                    <a href="userportal-form-list.html" class="text-gray-700 hover:text-primary py-3">表单列表</a>
+                    <a href="userportal-model-list.html" class="text-gray-700 hover:text-primary py-3">模型列表</a>
+                </nav>
+
+                <!-- 右侧用户信息 -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <select class="bg-white border border-gray-300 rounded-md px-3 py-1 text-sm" onchange="switchPortal(this.value)">
+                            <option value="user">使用者门户</option>
+                            <option value="admin">管理者门户</option>
+                            <option value="developer">开发者门户</option>
+                            <option value="shared">共享共建门户</option>
+                        </select>
+                    </div>
+                    <button class="text-gray-700 hover:text-primary">
+                        <i class="fa fa-question-circle text-xl"></i>
+                    </button>
+                    <div class="relative">
+                        <button class="text-gray-700 hover:text-primary">
+                            <i class="fa fa-envelope text-xl"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">1</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                            <i class="fa fa-user text-gray-500"></i>
+                        </div>
+                        <span class="text-gray-700">用户</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体内容区 -->
+    <main class="flex-grow">
+        <!-- BIM工具中心头部 -->
+        <section class="bim-tools-header py-8">
+            <div class="container mx-auto px-4">
+                <h2 class="text-2xl font-bold text-center text-dark mb-6">BIM工具中心</h2>
+                <div class="max-w-3xl mx-auto relative">
+                    <input type="text" placeholder="请输入工程数据关键字..." class="w-full px-6 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pl-10">
+                    <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i>
+                    <button class="absolute right-1 top-1 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-all-300">高级检索</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 最新工具展示 -->
+        <section class="py-8">
+            <div class="container mx-auto px-4">
+                <h3 class="text-xl font-bold text-dark mb-4">最新工具</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- 最新工具1 -->
+                    <div class="tool-card bg-white p-4 relative">
+                        <div class="tool-badge">新</div>
+                        <div class="h-32 bg-blue-100 rounded-md flex items-center justify-center mb-3">
+                            <div class="text-center">
+                                <div class="w-12 h-12 bg-primary rounded-full mx-auto mb-3 flex items-center justify-center">
+                                    <i class="fa fa-wrench text-white text-xl"></i>
+                                </div>
+                                <p class="font-medium text-sm">这是最新工具名称</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 最新工具2 -->
+                    <div class="tool-card bg-white p-4 relative">
+                        <div class="tool-badge">新</div>
+                        <div class="h-32 bg-blue-100 rounded-md flex items-center justify-center mb-3">
+                            <div class="text-center">
+                                <div class="w-12 h-12 bg-primary rounded-full mx-auto mb-3 flex items-center justify-center">
+                                    <i class="fa fa-wrench text-white text-xl"></i>
+                                </div>
+                                <p class="font-medium text-sm">这是最新工具名称</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 最新工具3 -->
+                    <div class="tool-card bg-white p-4 relative">
+                        <div class="tool-badge">新</div>
+                        <div class="h-32 bg-blue-100 rounded-md flex items-center justify-center mb-3">
+                            <div class="text-center">
+                                <div class="w-12 h-12 bg-primary rounded-full mx-auto mb-3 flex items-center justify-center">
+                                    <i class="fa fa-wrench text-white text-xl"></i>
+                                </div>
+                                <p class="font-medium text-sm">这是最新工具名称</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 最新工具4 -->
+                    <div class="tool-card bg-white p-4 relative">
+                        <div class="tool-badge">新</div>
+                        <div class="h-32 bg-blue-100 rounded-md flex items-center justify-center mb-3">
+                            <div class="text-center">
+                                <div class="w-12 h-12 bg-primary rounded-full mx-auto mb-3 flex items-center justify-center">
+                                    <i class="fa fa-wrench text-white text-xl"></i>
+                                </div>
+                                <p class="font-medium text-sm">这是最新工具名称</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 筛选条件区 -->
+        <section class="py-6 bg-white border-t border-gray-200">
+            <div class="container mx-auto px-4">
+                <h3 class="text-lg font-bold text-dark mb-4">筛选条件</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 软件兼容性 -->
+                    <div class="filter-group">
+                        <label class="block font-medium mb-2">软件兼容性：</label>
+                        <div class="flex flex-wrap">
+                            <div class="filter-checkbox">
+                                <input type="checkbox" checked>
+                                <span>全部</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>Revit</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>Navisworks</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>MicroStation</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>Tekla</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>ArchiCAD</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>SketchUp</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 专业领域 -->
+                    <div class="filter-group">
+                        <label class="block font-medium mb-2">专业领域：</label>
+                        <div class="flex flex-wrap">
+                            <div class="filter-checkbox">
+                                <input type="checkbox" checked>
+                                <span>全部</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>建筑专业</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>结构专业</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>机电专业</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>市政工程</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>水利水电</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 环境兼容 -->
+                    <div class="filter-group">
+                        <label class="block font-medium mb-2">环境兼容：</label>
+                        <div class="flex flex-wrap">
+                            <div class="filter-checkbox">
+                                <input type="checkbox" checked>
+                                <span>全部</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>Windows</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>MacOS</span>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox">
+                                <span>Linux</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 发布日期 -->
+                    <div class="filter-group">
+                        <label class="block font-medium mb-2">发布日期：</label>
+                        <div class="flex items-center">
+                            <input type="text" value="2023-03-06 ~ 2023-06-06" class="px-3 py-1 border border-gray-300 rounded-md">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 建模与深化设计类工具 -->
+        <section class="py-8">
+            <div class="container mx-auto px-4">
+                <h3 class="text-xl font-bold text-dark mb-4">建模与深化设计类</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- 工具1 -->
+                    <div class="tool-card bg-white p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-md flex items-center justify-center mr-3">
+                                    <i class="fa fa-file-word-o text-primary"></i>
+                                </div>
+                                <h4 class="font-medium">工具1</h4>
+                            </div>
+                            <button class="text-gray-500 hover:text-primary">
+                                <i class="fa fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="text-sm text-gray-600 mb-2">
+                            <span class="bg-blue-100 text-primary px-2 py-0.5 rounded-md">Revit (.rvt, .rfa)</span>
+                            <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md ml-2">房屋建筑</span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            发布时间：2026-1-7 10:31:04
+                        </div>
+                    </div>
+
+                    <!-- 工具2 -->
+                    <div class="tool-card bg-white p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-red-100 rounded-md flex items-center justify-center mr-3">
+                                    <i class="fa fa-users text-red-500"></i>
+                                </div>
+                                <h4 class="font-medium">工具2</h4>
+                            </div>
+                            <button class="text-gray-500 hover:text-primary">
+                                <i class="fa fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="text-sm text-gray-600 mb-2">
+                            <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md">房屋建筑</span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            发布时间：2026-1-7 10:31:04
+                        </div>
+                    </div>
+
+                    <!-- 工具3 -->
+                    <div class="tool-card bg-white p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-md flex items-center justify-center mr-3">
+                                    <i class="fa fa-paint-brush text-green-500"></i>
+                                </div>
+                                <h4 class="font-medium">工具3</h4>
+                            </div>
+                            <button class="text-gray-500 hover:text-primary">
+                                <i class="fa fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="text-sm text-gray-600 mb-2">
+                            <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md">房屋建筑</span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            发布时间：2026-1-7 10:31:04
+                        </div>
+                    </div>
+
+                    <!-- 工具4 -->
+                    <div class="tool-card bg-white p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-md flex items-center justify-center mr-3">
+                                    <i class="fa fa-cogs text-yellow-500"></i>
+                                </div>
+                                <h4 class="font-medium">工具4</h4>
+                            </div>
+                            <button class="text-gray-500 hover:text-primary">
+                                <i class="fa fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="text-sm text-gray-600 mb-2">
+                            <span class="bg-blue-100 text-primary px-2 py-0.5 rounded-md">Navisworks</span>
+                            <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md ml-2">市政工程</span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            发布时间：2026-1-7 10:31:04
+                        </div>
+                    </div>
+
+                    <!-- 工具5 -->
+                    <div class="tool-card bg-white p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-100 rounded-md flex items-center justify-center mr-3">
+                                    <i class="fa fa-laptop text-purple-500"></i>
+                                </div>
+                                <h4 class="font-medium">工具5</h4>
+                            </div>
+                            <button class="text-gray-500 hover:text-primary">
+                                <i class="fa fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="text-sm text-gray-600 mb-2">
+                            <span class="bg-blue-100 text-primary px-2 py-0.5 rounded-md">Tekla</span>
+                            <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md ml-2">结构专业</span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            发布时间：2026-1-7 10:31:04
+                        </div>
+                    </div>
+
+                    <!-- 工具6 -->
+                    <div class="tool-card bg-white p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-indigo-100 rounded-md flex items-center justify-center mr-3">
+                                    <i class="fa fa-building text-indigo-500"></i>
+                                </div>
+                                <h4 class="font-medium">工具6</h4>
+                            </div>
+                            <button class="text-gray-500 hover:text-primary">
+                                <i class="fa fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="text-sm text-gray-600 mb-2">
+                            <span class="bg-blue-100 text-primary px-2 py-0.5 rounded-md">ArchiCAD</span>
+                            <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md ml-2">建筑专业</span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            发布时间：2026-1-7 10:31:04
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚区 -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm">© 2026 深圳市BIM统一门户平台 版权所有</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 设置当前日期
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('zh-CN', options);
+        });
+
+        // 切换门户
+        function switchPortal(value) {
+            if (value === 'admin') {
+                window.location.href = 'adminportal-homepage.html';
+            } else if (value === 'user') {
+                window.location.href = 'userportal-homepage-new.html';
+            } else if (value === 'developer') {
+                window.location.href = 'developerportal-homepage.html';
+            } else if (value === 'shared') {
+                window.location.href = 'sharedportal-homepage.html';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深圳市BIM统一门户平台 - 任务列表</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 统一配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0052D9',
+                        secondary: '#0078D4',
+                        accent: '#00B4D8',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        gray: {
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style>
+        .content-auto {
+            content-visibility: auto;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .transition-all-300 {
+            transition: all 300ms ease-in-out;
+        }
+        .bg-gradient-blue {
+            background: linear-gradient(135deg, #0052D9 0%, #0078D4 100%);
+        }
+        .card-hover {
+            transition: all 300ms ease-in-out;
+        }
+        .card-hover:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            color: #64748B;
+            transition: all 300ms ease-in-out;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(0, 82, 217, 0.1);
+            color: #0052D9;
+        }
+        .sidebar-item.active {
+            background-color: rgba(0, 82, 217, 0.1);
+            color: #0052D9;
+            font-weight: 500;
+        }
+        .task-list-header {
+            background: linear-gradient(135deg, #E6F0FF 0%, #F0F7FF 100%);
+        }
+        .task-tag {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+        .task-tag.design {
+            background-color: #E6F7FF;
+            color: #1890FF;
+        }
+        .task-tag.model-submit {
+            background-color: #F6FFED;
+            color: #52C41A;
+        }
+        .task-tag.dev-request {
+            background-color: #FFF7E6;
+            color: #FA8C16;
+        }
+        .task-tag.subscribe-request {
+            background-color: #F0F5FF;
+            color: #722ED1;
+        }
+        .task-tag.project-config {
+            background-color: #FFF0F6;
+            color: #EB2F96;
+        }
+        .task-priority {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+        }
+        .task-priority.urgent {
+            background-color: #FFF2F0;
+            color: #FF4D4F;
+        }
+        .task-priority.medium {
+            background-color: #FFF7E6;
+            color: #FA8C16;
+        }
+        .task-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+        }
+        .task-status.in-progress {
+            background-color: #E6F7FF;
+            color: #1890FF;
+        }
+        .task-status.rejected {
+            background-color: #FFF2F0;
+            color: #FF4D4F;
+        }
+        .task-status.approved {
+            background-color: #F6FFED;
+            color: #52C41A;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <!-- 顶部信息条 -->
+    <div class="bg-dark text-white py-2">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span class="font-semibold">深圳市BIM统一门户平台</span>
+                <span class="text-gray-400 text-sm" id="current-date"></span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="login.html" class="text-sm hover:text-accent transition-all-300">退出登录</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">联系我们</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">常见问题</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">English</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                <!-- 平台标识 -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fa fa-building text-white text-sm"></i>
+                    </div>
+                    <h1 class="text-lg font-bold text-dark">深圳市BIM开放平台 | 使用者门户</h1>
+                </div>
+
+                <!-- 主导航菜单 -->
+                <nav class="flex space-x-6">
+                    <a href="userportal-homepage-new.html" class="text-gray-700 hover:text-primary py-3">平台首页</a>
+                    <a href="userportal-data-service.html" class="text-gray-700 hover:text-primary py-3">数据服务</a>
+                    <a href="userportal-capability-service.html" class="text-gray-700 hover:text-primary py-3">能力服务</a>
+                    <a href="#" class="text-gray-700 hover:text-primary py-3">应用服务</a>
+                    <a href="userportal-bim-tools.html" class="text-gray-700 hover:text-primary py-3">BIM工具</a>
+                    <a href="userportal-task-list.html" class="text-primary font-medium border-b-2 border-primary py-3">任务列表</a>
+                    <a href="userportal-form-list.html" class="text-gray-700 hover:text-primary py-3">表单列表</a>
+                    <a href="userportal-model-list.html" class="text-gray-700 hover:text-primary py-3">模型列表</a>
+                </nav>
+
+                <!-- 右侧用户信息 -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <select class="bg-white border border-gray-300 rounded-md px-3 py-1 text-sm" onchange="switchPortal(this.value)">
+                            <option value="user">使用者门户</option>
+                            <option value="admin">管理者门户</option>
+                            <option value="developer">开发者门户</option>
+                            <option value="shared">共享共建门户</option>
+                        </select>
+                    </div>
+                    <button class="text-gray-700 hover:text-primary">
+                        <i class="fa fa-question-circle text-xl"></i>
+                    </button>
+                    <div class="relative">
+                        <button class="text-gray-700 hover:text-primary">
+                            <i class="fa fa-envelope text-xl"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">1</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                            <i class="fa fa-user text-gray-500"></i>
+                        </div>
+                        <span class="text-gray-700">用户</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体内容区 -->
+    <main class="flex-grow">
+        <!-- 任务列表头部 -->
+        <section class="task-list-header py-8">
+            <div class="container mx-auto px-4">
+                <h2 class="text-2xl font-bold text-center text-dark mb-6">任务列表</h2>
+                <div class="max-w-3xl mx-auto relative">
+                    <input type="text" placeholder="请输入模型名称、任务名称、责任人名称等关键字..." class="w-full px-6 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pl-10">
+                    <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- 筛选条件区 -->
+        <section class="py-6 bg-white border-b border-gray-200">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-wrap items-center gap-4">
+                    <select class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option>请选择任务类型</option>
+                        <option>设计任务</option>
+                        <option>模型提交</option>
+                        <option>开发申请</option>
+                        <option>订阅申请</option>
+                        <option>项目配置</option>
+                    </select>
+                    <select class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option>请选择项目阶段</option>
+                        <option>规划阶段</option>
+                        <option>设计阶段</option>
+                        <option>施工阶段</option>
+                        <option>运维阶段</option>
+                    </select>
+                    <select class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option>请选择紧急程度</option>
+                        <option>紧急</option>
+                        <option>中级</option>
+                        <option>一般</option>
+                    </select>
+                    <select class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option>请选择任务状态</option>
+                        <option>进行中</option>
+                        <option>已通过</option>
+                        <option>未通过</option>
+                        <option>已完成</option>
+                    </select>
+                    <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-all-300">
+                        查询
+                    </button>
+                    <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-all-300">
+                        重置
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 批量操作区 -->
+        <section class="py-4 bg-white border-b border-gray-200">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex space-x-2">
+                        <button class="bg-primary text-white px-3 py-1 rounded-md hover:bg-primary/90 transition-all-300 text-sm">
+                            批量完成
+                        </button>
+                        <button class="bg-primary text-white px-3 py-1 rounded-md hover:bg-primary/90 transition-all-300 text-sm">
+                            批量分配
+                        </button>
+                        <button class="bg-primary text-white px-3 py-1 rounded-md hover:bg-primary/90 transition-all-300 text-sm">
+                            批量归档
+                        </button>
+                    </div>
+                    <div>
+                        <button class="text-gray-700 hover:text-primary text-sm">
+                            显示字段
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 任务列表表格 -->
+        <section class="py-6 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-200">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">序号</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">任务名称</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">任务标签</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">关联模型</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目名称</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">紧急程度↑↓</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">任务状态↑↓</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">截止日期↑↓</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                            <!-- 任务1 -->
+                            <tr class="border-b border-gray-200">
+                                <td class="px-4 py-3 text-sm text-gray-900">1</td>
+                                <td class="px-4 py-3 text-sm text-blue-600">初步案例任务</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-tag design">设计</span>
+                                    <span class="task-tag model-submit">模型提交</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900">凤凰广场BIM模型</td>
+                                <td class="px-4 py-3 text-sm text-gray-900">凤凰广场</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-priority medium">中级</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-status in-progress">进行中</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900">2026-1-9</td>
+                                <td class="px-4 py-3 text-sm text-blue-600">
+                                    <a href="#" class="mr-2">审批</a>
+                                    <a href="#" class="mr-2">分配</a>
+                                    <a href="#">归档</a>
+                                </td>
+                            </tr>
+                            <!-- 任务2 -->
+                            <tr class="border-b border-gray-200">
+                                <td class="px-4 py-3 text-sm text-gray-900">2</td>
+                                <td class="px-4 py-3 text-sm text-blue-600">张三开发申请审批</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-tag dev-request">开发申请</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-priority urgent">紧急</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-status in-progress">进行中</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm text-blue-600">
+                                    <a href="#" class="mr-2">审批</a>
+                                    <a href="#" class="mr-2">分配</a>
+                                    <a href="#">详情</a>
+                                </td>
+                            </tr>
+                            <!-- 任务3 -->
+                            <tr class="border-b border-gray-200">
+                                <td class="px-4 py-3 text-sm text-gray-900">3</td>
+                                <td class="px-4 py-3 text-sm text-blue-600">xx服务订阅申请</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-tag subscribe-request">订阅申请</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-priority medium">中级</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-status in-progress">进行中</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm text-blue-600">
+                                    <a href="#" class="mr-2">催办</a>
+                                    <a href="#">详情</a>
+                                </td>
+                            </tr>
+                            <!-- 任务4 -->
+                            <tr class="border-b border-gray-200">
+                                <td class="px-4 py-3 text-sm text-gray-900">4</td>
+                                <td class="px-4 py-3 text-sm text-blue-600">xx服务订阅申请</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-tag subscribe-request">订阅申请</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-priority medium">中级</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-status rejected">未通过</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm text-blue-600">
+                                    <a href="#" class="mr-2">重新申请</a>
+                                    <a href="#">详情</a>
+                                </td>
+                            </tr>
+                            <!-- 任务5 -->
+                            <tr class="border-b border-gray-200">
+                                <td class="px-4 py-3 text-sm text-gray-900">5</td>
+                                <td class="px-4 py-3 text-sm text-blue-600">xx服务订阅申请</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-tag subscribe-request">订阅申请</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-priority medium">中级</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-status rejected">未通过</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm text-blue-600">
+                                    <a href="#" class="mr-2">重新申请</a>
+                                    <a href="#">详情</a>
+                                </td>
+                            </tr>
+                            <!-- 任务6 -->
+                            <tr class="border-b border-gray-200">
+                                <td class="px-4 py-3 text-sm text-gray-900">6</td>
+                                <td class="px-4 py-3 text-sm text-blue-600">xx项目配置申请</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-tag project-config">项目配置</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-priority medium">中级</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="task-status approved">已通过</span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900"></td>
+                                <td class="px-4 py-3 text-sm text-blue-600">
+                                    <a href="#">详情</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页 -->
+                <div class="flex items-center justify-between mt-6">
+                    <div class="text-sm text-gray-600">
+                        共 876 条
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">
+                            <i class="fa fa-angle-left"></i>
+                        </button>
+                        <button class="px-3 py-1 border border-primary bg-primary text-white rounded-md">1</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">2</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">3</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">4</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">5</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">6</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">7</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">8</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">9</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                        <select class="px-2 py-1 border border-gray-300 rounded-md text-sm ml-2">
+                            <option>10条/页</option>
+                            <option>20条/页</option>
+                            <option>50条/页</option>
+                            <option>100条/页</option>
+                        </select>
+                        <div class="flex items-center ml-2">
+                            <span class="text-sm text-gray-600 mr-2">跳至</span>
+                            <input type="text" value="5" class="w-10 px-2 py-1 border border-gray-300 rounded-md text-sm">
+                            <span class="text-sm text-gray-600 ml-2">页</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚区 -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm">© 2026 深圳市BIM统一门户平台 版权所有</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 设置当前日期
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('zh-CN', options);
+        });
+
+        // 切换门户
+        function switchPortal(value) {
+            if (value === 'admin') {
+                window.location.href = 'adminportal-homepage.html';
+            } else if (value === 'user') {
+                window.location.href = 'userportal-homepage-new.html';
+            } else if (value === 'developer') {
+                window.location.href = 'developerportal-homepage.html';
+            } else if (value === 'shared') {
+                window.location.href = 'sharedportal-homepage.html';
+            }
+        }
+    </script>
+</body>
+</html>

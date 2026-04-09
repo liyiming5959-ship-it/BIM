@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深圳市BIM统一门户平台 - 模型列表</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 统一配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0052D9',
+                        secondary: '#0078D4',
+                        accent: '#00B4D8',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        gray: {
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style>
+        .content-auto {
+            content-visibility: auto;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .transition-all-300 {
+            transition: all 300ms ease-in-out;
+        }
+        .bg-gradient-blue {
+            background: linear-gradient(135deg, #0052D9 0%, #0078D4 100%);
+        }
+        .card-hover {
+            transition: all 300ms ease-in-out;
+        }
+        .card-hover:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            color: #64748B;
+            transition: all 300ms ease-in-out;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(0, 82, 217, 0.1);
+            color: #0052D9;
+        }
+        .sidebar-item.active {
+            background-color: rgba(0, 82, 217, 0.1);
+            color: #0052D9;
+            font-weight: 500;
+        }
+        .model-list-header {
+            background: linear-gradient(135deg, #E6F0FF 0%, #F0F7FF 100%);
+        }
+        .model-card {
+            border: 1px solid #E2E8F0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            transition: all 300ms ease-in-out;
+        }
+        .model-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+        .model-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .model-badge.version {
+            background-color: #E6F7FF;
+            color: #1890FF;
+        }
+        .model-badge.stage {
+            background-color: #F6FFED;
+            color: #52C41A;
+        }
+        .model-badge.agency {
+            background-color: #FFF7E6;
+            color: #FA8C16;
+        }
+        .model-badge.size {
+            background-color: #F0F5FF;
+            color: #722ED1;
+        }
+        .model-badge.level {
+            background-color: #FFF0F6;
+            color: #EB2F96;
+        }
+        .model-popularity {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .model-popularity i {
+            color: #FFB800;
+            margin-right: 0.25rem;
+        }
+        .model-popularity .fire {
+            color: #FF4D4F;
+            margin-right: 0.25rem;
+        }
+        .sidebar-section {
+            margin-bottom: 1rem;
+        }
+        .sidebar-section-title {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-section-title i {
+            font-size: 0.75rem;
+            color: #64748B;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding-left: 1rem;
+        }
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-menu a {
+            color: #64748B;
+            text-decoration: none;
+            transition: all 300ms ease-in-out;
+            display: block;
+            padding: 0.25rem 0;
+        }
+        .sidebar-menu a:hover {
+            color: #0052D9;
+        }
+        .sidebar-menu a.active {
+            color: #0052D9;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <!-- 顶部信息条 -->
+    <div class="bg-dark text-white py-2">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span class="font-semibold">深圳市BIM统一门户平台</span>
+                <span class="text-gray-400 text-sm" id="current-date"></span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="login.html" class="text-sm hover:text-accent transition-all-300">退出登录</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">联系我们</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">常见问题</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">English</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                <!-- 平台标识 -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fa fa-building text-white text-sm"></i>
+                    </div>
+                    <h1 class="text-lg font-bold text-dark">深圳市BIM开放平台 | 使用者门户</h1>
+                </div>
+
+                <!-- 主导航菜单 -->
+                <nav class="flex space-x-6">
+                    <a href="userportal-homepage-new.html" class="text-gray-700 hover:text-primary py-3">平台首页</a>
+                    <a href="userportal-data-service.html" class="text-gray-700 hover:text-primary py-3">数据服务</a>
+                    <a href="userportal-capability-service.html" class="text-gray-700 hover:text-primary py-3">能力服务</a>
+                    <a href="#" class="text-gray-700 hover:text-primary py-3">应用服务</a>
+                    <a href="userportal-bim-tools.html" class="text-gray-700 hover:text-primary py-3">BIM工具</a>
+                    <a href="userportal-task-list.html" class="text-gray-700 hover:text-primary py-3">任务列表</a>
+                    <a href="userportal-form-list.html" class="text-gray-700 hover:text-primary py-3">表单列表</a>
+                    <a href="userportal-model-list.html" class="text-primary font-medium border-b-2 border-primary py-3">模型列表</a>
+                </nav>
+
+                <!-- 右侧用户信息 -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <select class="bg-white border border-gray-300 rounded-md px-3 py-1 text-sm" onchange="switchPortal(this.value)">
+                            <option value="user">使用者门户</option>
+                            <option value="admin">管理者门户</option>
+                            <option value="developer">开发者门户</option>
+                            <option value="shared">共享共建门户</option>
+                        </select>
+                    </div>
+                    <button class="text-gray-700 hover:text-primary">
+                        <i class="fa fa-question-circle text-xl"></i>
+                    </button>
+                    <div class="relative">
+                        <button class="text-gray-700 hover:text-primary">
+                            <i class="fa fa-envelope text-xl"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">1</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                            <i class="fa fa-user text-gray-500"></i>
+                        </div>
+                        <span class="text-gray-700">用户</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体内容区 -->
+    <main class="flex-grow flex">
+        <!-- 左侧菜单栏 -->
+        <aside class="w-64 bg-white shadow-md flex-shrink-0">
+            <div class="p-4">
+                <!-- 工程阶段 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">
+                        <span class="flex items-center">
+                            <i class="fa fa-folder mr-2"></i>
+                            工程阶段
+                        </span>
+                        <i class="fa fa-chevron-down"></i>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="#" class="active">设计阶段</a></li>
+                        <li><a href="#">施工阶段</a></li>
+                        <li><a href="#">竣工阶段</a></li>
+                        <li><a href="#">运维阶段</a></li>
+                    </ul>
+                </div>
+
+                <!-- 专业领域 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">
+                        <span class="flex items-center">
+                            <i class="fa fa-cogs mr-2"></i>
+                            专业领域
+                        </span>
+                        <i class="fa fa-chevron-down"></i>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="#">建筑</a></li>
+                        <li><a href="#">结构</a></li>
+                        <li><a href="#">给排水</a></li>
+                    </ul>
+                </div>
+
+                <!-- 构件类型 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">
+                        <span class="flex items-center">
+                            <i class="fa fa-cube mr-2"></i>
+                            构件类型
+                        </span>
+                        <i class="fa fa-chevron-down"></i>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="#">墙</a></li>
+                        <li><a href="#">板</a></li>
+                        <li><a href="#">柱</a></li>
+                        <li><a href="#">设备</a></li>
+                    </ul>
+                </div>
+
+                <!-- 场景主题 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">
+                        <span class="flex items-center">
+                            <i class="fa fa-picture-o mr-2"></i>
+                            场景主题
+                        </span>
+                        <i class="fa fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <!-- 模型版本 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">
+                        <span class="flex items-center">
+                            <i class="fa fa-code-fork mr-2"></i>
+                            模型版本
+                        </span>
+                        <i class="fa fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <!-- 技术特征 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">
+                        <span class="flex items-center">
+                            <i class="fa fa-wrench mr-2"></i>
+                            技术特征
+                        </span>
+                        <i class="fa fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 右侧内容区 -->
+        <div class="flex-grow">
+            <!-- 模型列表头部 -->
+            <section class="model-list-header py-8">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-2xl font-bold text-center text-dark mb-6">BIM模型</h2>
+                    <div class="max-w-3xl mx-auto relative">
+                        <input type="text" placeholder="请输入工程数据关键字..." class="w-full px-6 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pl-10">
+                        <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i>
+                        <button class="absolute right-1 top-1 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-all-300">高级检索</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 模型列表 -->
+            <section class="py-8">
+                <div class="container mx-auto px-4">
+                    <div class="space-y-6">
+                        <!-- 模型1 -->
+                        <div class="model-card bg-white p-4">
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/4 mb-4 md:mb-0 md:pr-4">
+                                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=3D%20BIM%20model%20of%20residential%20apartment%20complex%2C%20professional%20technical%20drawing%2C%20blue%20background&image_size=landscape_4_3" alt="向南西海花园AB栋裙楼二层局部二次装饰装修工程" class="w-full h-48 object-cover rounded-md">
+                                </div>
+                                <div class="md:w-3/4">
+                                    <h3 class="font-medium text-lg mb-3">向南西海花园AB栋裙楼二层局部二次装饰装修工程</h3>
+                                    <div class="flex flex-wrap mb-3">
+                                        <span class="model-badge version">v1.0.1</span>
+                                        <span class="model-badge stage">施工阶段</span>
+                                        <span class="model-badge agency">市住建局</span>
+                                        <span class="model-badge size">126GB</span>
+                                        <span class="model-badge level">LOD4</span>
+                                    </div>
+                                    <div class="model-popularity mb-3">
+                                        <i class="fa fa-fire fire"></i>
+                                        <span>1922</span>
+                                        <div class="ml-4">
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star-half-o"></i>
+                                            <span class="ml-2">4.5分</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap text-sm text-gray-600">
+                                        <div class="mr-6 mb-2">
+                                            <span class="font-medium">创建人：</span>
+                                            <span>陈紫茵</span>
+                                        </div>
+                                        <div class="mr-6 mb-2">
+                                            <span class="font-medium">审批单位：</span>
+                                            <span>某某审批机构</span>
+                                        </div>
+                                        <div class="mr-6 mb-2">
+                                            <span class="font-medium">更新时间：</span>
+                                            <span>2026-1-7</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 模型2 -->
+                        <div class="model-card bg-white p-4">
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/4 mb-4 md:mb-0 md:pr-4">
+                                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=3D%20BIM%20model%20of%20modern%20high-rise%20building%2C%20professional%20technical%20drawing%2C%20blue%20background&image_size=landscape_4_3" alt="2024年新能源汽车高压电控系统技术装备提升项目" class="w-full h-48 object-cover rounded-md">
+                                </div>
+                                <div class="md:w-3/4">
+                                    <h3 class="font-medium text-lg mb-3">2024年新能源汽车高压电控系统技术装备提升项目</h3>
+                                    <div class="flex flex-wrap mb-3">
+                                        <span class="model-badge version">v1.0.1</span>
+                                        <span class="model-badge stage">施工阶段</span>
+                                        <span class="model-badge agency">市住建局</span>
+                                        <span class="model-badge size">12GB</span>
+                                        <span class="model-badge level">LOD4</span>
+                                    </div>
+                                    <div class="model-popularity mb-3">
+                                        <i class="fa fa-fire fire"></i>
+                                        <span>1922</span>
+                                        <div class="ml-4">
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star-half-o"></i>
+                                            <span class="ml-2">4.5分</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap text-sm text-gray-600">
+                                        <div class="mr-6 mb-2">
+                                            <span class="font-medium">创建人：</span>
+                                            <span>市住建局</span>
+                                        </div>
+                                        <div class="mr-6 mb-2">
+                                            <span class="font-medium">审批单位：</span>
+                                            <span>某某审批机构</span>
+                                        </div>
+                                        <div class="mr-6 mb-2">
+                                            <span class="font-medium">更新时间：</span>
+                                            <span>2026-1-7</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 模型3 -->
+                        <div class="model-card bg-white p-4">
+                            <div class="flex flex-col md:flex-row">
+                                <div class="md:w-1/4 mb-4 md:mb-0 md:pr-4">
+                                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=3D%20BIM%20model%20of%20residential%20apartment%20complex%2C%20professional%20technical%20drawing%2C%20blue%20background&image_size=landscape_4_3" alt="向南西海花园AB栋裙楼二层局部二次装饰装修工程" class="w-full h-48 object-cover rounded-md">
+                                </div>
+                                <div class="md:w-3/4">
+                                    <h3 class="font-medium text-lg mb-3">向南西海花园AB栋裙楼二层局部二次装饰装修工程</h3>
+                                    <div class="flex flex-wrap mb-3">
+                                        <span class="model-badge version">v1.0.1</span>
+                                        <span class="model-badge stage">施工阶段</span>
+                                        <span class="model-badge agency">市住建局</span>
+                                        <span class="model-badge size">126GB</span>
+                                        <span class="model-badge level">LOD4</span>
+                                    </div>
+                                    <div class="model-popularity mb-3">
+                                        <i class="fa fa-fire fire"></i>
+                                        <span>1922</span>
+                                        <div class="ml-4">
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star-half-o"></i>
+                                            <span class="ml-2">4.5分</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap text-sm text-gray-600">
+                                        <div class="mr-6 mb-2">
+                                            <span class="font-medium">创建人：</span>
+                                            <span>陈紫茵</span>
+                                        </div>
+                                        <div class="mr-6 mb-2">
+                                            <span class="font-medium">审批单位：</span>
+                                            <span>某某审批机构</span>
+                                        </div>
+                                        <div class="mr-6 mb-2">
+                                            <span class="font-medium">更新时间：</span>
+                                            <span>2026-1-7</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 分页 -->
+                    <div class="flex items-center justify-between mt-8">
+                        <div class="text-sm text-gray-600">
+                            共 9 条
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <button class="px-3 py-1 border border-primary bg-primary text-white rounded-md">1</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">2</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚区 -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm">© 2026 深圳市BIM统一门户平台 版权所有</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 设置当前日期
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('zh-CN', options);
+        });
+
+        // 切换门户
+        function switchPortal(value) {
+            if (value === 'admin') {
+                window.location.href = 'adminportal-homepage.html';
+            } else if (value === 'user') {
+                window.location.href = 'userportal-homepage-new.html';
+            } else if (value === 'developer') {
+                window.location.href = 'developerportal-homepage.html';
+            } else if (value === 'shared') {
+                window.location.href = 'sharedportal-homepage.html';
+            }
+        }
+    </script>
+</body>
+</html>

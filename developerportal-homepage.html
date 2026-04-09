@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深圳市BIM统一门户平台 - 开发者门户</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 统一配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0052D9',
+                        secondary: '#0078D4',
+                        accent: '#00B4D8',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        gray: {
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style>
+        .content-auto {
+            content-visibility: auto;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .transition-all-300 {
+            transition: all 300ms ease-in-out;
+        }
+        .bg-gradient-blue {
+            background: linear-gradient(135deg, #0052D9 0%, #0078D4 100%);
+        }
+        .card-hover {
+            transition: all 300ms ease-in-out;
+        }
+        .card-hover:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+        .nav-item {
+            position: relative;
+        }
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #0052D9;
+            transition: width 300ms ease-in-out;
+        }
+        .nav-item:hover::after {
+            width: 100%;
+        }
+        .nav-item.active::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <!-- 顶部信息条 -->
+    <div class="bg-dark text-white py-2">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span class="font-semibold">深圳市BIM统一门户平台</span>
+                <span class="text-gray-400 text-sm" id="current-date"></span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="login.html" class="text-sm hover:text-accent transition-all-300">退出登录</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">联系我们</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">常见问题</a>
+                <a href="#" class="text-sm hover:text-accent transition-all-300">English</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                <!-- 平台标识 -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fa fa-building text-white text-sm"></i>
+                    </div>
+                    <h1 class="text-lg font-bold text-dark">深圳市BIM开放平台 | 开发者门户</h1>
+                </div>
+
+                <!-- 主导航菜单 -->
+                <nav class="flex space-x-6">
+                    <a href="developerportal-homepage.html" class="text-primary font-medium nav-item active py-3">平台首页</a>
+                    <a href="#" class="text-gray-700 hover:text-primary nav-item py-3">平台资讯</a>
+                    <a href="#" class="text-gray-700 hover:text-primary nav-item py-3">资源管理</a>
+                    <a href="#" class="text-gray-700 hover:text-primary nav-item py-3">开发申请</a>
+                    <a href="#" class="text-gray-700 hover:text-primary nav-item py-3">接口管理</a>
+                </nav>
+
+                <!-- 右侧用户信息 -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <select class="bg-white border border-gray-300 rounded-md px-3 py-1 text-sm" onchange="switchPortal(this.value)">
+                            <option value="developer">开发者门户</option>
+                            <option value="user">使用者门户</option>
+                            <option value="admin">管理者门户</option>
+                            <option value="shared">共享共建门户</option>
+                        </select>
+                    </div>
+                    <button class="text-gray-700 hover:text-primary">
+                        <i class="fa fa-question-circle text-xl"></i>
+                    </button>
+                    <div class="relative">
+                        <button class="text-gray-700 hover:text-primary">
+                            <i class="fa fa-envelope text-xl"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                            <i class="fa fa-user text-gray-500"></i>
+                        </div>
+                        <span class="text-gray-700">张楚岚</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体内容区 -->
+    <main class="flex-grow">
+        <!-- 开发者信息 -->
+        <section class="py-6 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mr-4">
+                            <i class="fa fa-user text-gray-500"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium">张楚岚</h3>
+                            <p class="text-sm text-gray-500">特色软科技 | 外部专家 | 住建部-BIM技术 | 15813088888</p>
+                            <p class="text-sm text-gray-500">成果浏览量：2931 | 点赞：324</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="flex items-center mr-6">
+                            <i class="fa fa-bullhorn text-primary mr-2"></i>
+                            <span class="text-sm">最新公告</span>
+                            <span class="text-sm text-gray-500 ml-2">2022.10.27</span>
+                            <span class="text-sm ml-2">一号通知：深圳市域时空信息平台通知深圳市域时空信息平台通知深圳市域时空信息平台通知</span>
+                        </div>
+                        <button class="text-gray-500 hover:text-primary">
+                            <i class="fa fa-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 成果展示区 -->
+        <section class="py-6">
+            <div class="container mx-auto px-4">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-dark">成果展示</h2>
+                        <a href="#" class="text-primary hover:underline flex items-center">
+                            更多
+                            <i class="fa fa-chevron-right ml-1"></i>
+                        </a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- 成果1 -->
+                        <div class="border border-gray-200 rounded-lg overflow-hidden card-hover">
+                            <div class="relative">
+                                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20red%20building%203D%20model%2C%20BIM%20visualization%2C%20with%20blue%20road%20and%20green%20surroundings%2C%20professional%20architectural%20rendering&image_size=square" alt="深圳市平安金融中心" class="w-full h-48 object-cover">
+                                <div class="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full w-8 h-8 flex items-center justify-center">
+                                    <i class="fa fa-eye text-primary"></i>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-medium text-gray-900 mb-2">深圳市平安金融中心</h3>
+                                <div class="flex items-center text-sm text-gray-500 mb-3">
+                                    <span>2023-03-02</span>
+                                    <div class="flex items-center ml-auto">
+                                        <span class="flex items-center mr-3">
+                                            <i class="fa fa-eye mr-1"></i>
+                                            1374
+                                        </span>
+                                        <span class="flex items-center">
+                                            <i class="fa fa-heart mr-1"></i>
+                                            32
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 成果2 -->
+                        <div class="border border-gray-200 rounded-lg overflow-hidden card-hover">
+                            <div class="relative">
+                                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20gray%20high-rise%20building%203D%20model%2C%20BIM%20visualization%2C%20professional%20architectural%20rendering&image_size=square" alt="2024年新能源汽车高压电站..." class="w-full h-48 object-cover">
+                                <div class="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full w-8 h-8 flex items-center justify-center">
+                                    <i class="fa fa-eye text-primary"></i>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-medium text-gray-900 mb-2">2024年新能源汽车高压电站...</h3>
+                                <div class="flex items-center text-sm text-gray-500 mb-3">
+                                    <span>2023-05-23</span>
+                                    <div class="flex items-center ml-auto">
+                                        <span class="flex items-center mr-3">
+                                            <i class="fa fa-eye mr-1"></i>
+                                            1374
+                                        </span>
+                                        <span class="flex items-center">
+                                            <i class="fa fa-heart mr-1"></i>
+                                            0
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 成果3 -->
+                        <div class="border border-gray-200 rounded-lg overflow-hidden card-hover">
+                            <div class="relative">
+                                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=traditional%20Chinese%20style%20building%203D%20model%2C%20BIM%20visualization%2C%20professional%20architectural%20rendering&image_size=square" alt="向南海花园A栋裙楼二层屋..." class="w-full h-48 object-cover">
+                                <div class="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full w-8 h-8 flex items-center justify-center">
+                                    <i class="fa fa-eye text-primary"></i>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-medium text-gray-900 mb-2">向南海花园A栋裙楼二层屋...</h3>
+                                <div class="flex items-center text-sm text-gray-500 mb-3">
+                                    <span>2023-05-28</span>
+                                    <div class="flex items-center ml-auto">
+                                        <span class="flex items-center mr-3">
+                                            <i class="fa fa-eye mr-1"></i>
+                                            1374
+                                        </span>
+                                        <span class="flex items-center">
+                                            <i class="fa fa-heart mr-1"></i>
+                                            32
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 暂存代码区 -->
+        <section class="py-6">
+            <div class="container mx-auto px-4">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-dark">暂存代码区</h2>
+                        <div class="flex space-x-2">
+                            <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-all-300">
+                                上传代码
+                            </button>
+                            <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-all-300">
+                                删除
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目代码名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">最近更新时间</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">版本</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">项目代码名称</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2026-1-13 17:20:42</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">V1.2.0</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                                        <a href="#" class="mr-3">设计样式</a>
+                                        <a href="#">审核样式</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">项目代码名称</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2026-1-13 17:20:42</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">V1.2.0</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                                        <a href="#" class="mr-3">设计样式</a>
+                                        <a href="#">审核样式</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 右侧功能区 -->
+        <section class="py-6">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <!-- 常用功能 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-medium text-gray-900 flex items-center">
+                                <i class="fa fa-star text-primary mr-2"></i>
+                                常用功能
+                            </h3>
+                            <i class="fa fa-ellipsis-v text-gray-400"></i>
+                        </div>
+                        <div class="space-y-3">
+                            <a href="#" class="flex items-center p-3 bg-blue-50 rounded-md text-primary hover:bg-blue-100 transition-all-300">
+                                <i class="fa fa-folder mr-3"></i>
+                                资源管理
+                            </a>
+                            <a href="#" class="flex items-center p-3 bg-gray-50 rounded-md text-gray-700 hover:bg-gray-100 transition-all-300">
+                                <i class="fa fa-file-text-o mr-3"></i>
+                                开发申请
+                            </a>
+                            <a href="#" class="flex items-center p-3 bg-gray-50 rounded-md text-gray-700 hover:bg-gray-100 transition-all-300">
+                                <i class="fa fa-tasks mr-3"></i>
+                                接口管理
+                            </a>
+                            <a href="#" class="flex items-center p-3 bg-gray-50 rounded-md text-gray-700 hover:bg-gray-100 transition-all-300">
+                                <i class="fa fa-user mr-3"></i>
+                                个人中心
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 消息通知 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6 lg:col-span-2">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-medium text-gray-900">消息通知</h3>
+                            <a href="#" class="text-primary hover:underline">更多</a>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-start p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-all-300">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fa fa-bell text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-sm">个人通知</h4>
+                                    <p class="text-xs text-gray-500 mt-1">2026-1-9 15:34:26</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-all-300">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fa fa-bell text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-sm">系统通知</h4>
+                                    <p class="text-xs text-gray-500 mt-1">2026-1-9 15:34:26</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-all-300">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fa fa-bell text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-sm">特殊资源审批通知</h4>
+                                    <p class="text-xs text-gray-500 mt-1">2026-1-9 15:34:26</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-all-300">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fa fa-bell text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-sm">特殊资源审批通知</h4>
+                                    <p class="text-xs text-gray-500 mt-1">2026-1-9 15:34:26</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-all-300">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fa fa-bell text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-sm">特殊资源审批通知</h4>
+                                    <p class="text-xs text-gray-500 mt-1">2026-1-9 15:34:26</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 管理常用 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-medium text-gray-900">管理常用</h3>
+                            <i class="fa fa-ellipsis-v text-gray-400"></i>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fa fa-cog text-gray-400 text-3xl"></i>
+                            </div>
+                            <p class="text-center text-gray-500 text-sm">管理常用功能</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚区 -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm">© 2026 深圳市BIM统一门户平台 版权所有</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 设置当前日期
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('zh-CN', options);
+        });
+
+        // 切换门户
+        function switchPortal(value) {
+            if (value === 'user') {
+                window.location.href = 'userportal-homepage-new.html';
+            } else if (value === 'admin') {
+                window.location.href = 'adminportal-homepage.html';
+            } else if (value === 'shared') {
+                window.location.href = 'sharedportal-homepage.html';
+            } else {
+                window.location.href = 'developerportal-homepage.html';
+            }
+        }
+    </script>
+</body>
+</html>

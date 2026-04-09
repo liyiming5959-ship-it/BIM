@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深圳市BIM数据与能力中台</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- 统一配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0052D9',
+                        secondary: '#0078D4',
+                        accent: '#00B4D8',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        gov: {
+                            50: '#F0F7FF',
+                            100: '#E6F0FF',
+                            200: '#BFDBFE',
+                            300: '#93C5FD',
+                            400: '#60A5FA',
+                            500: '#3B82F6',
+                            600: '#2563EB',
+                            700: '#1D4ED8',
+                            800: '#1E40AF',
+                            900: '#1E3A8A',
+                        },
+                        gray: {
+                            50: '#F9FAFB',
+                            100: '#F3F4F6',
+                            200: '#E5E7EB',
+                            300: '#D1D5DB',
+                            400: '#9CA3AF',
+                            500: '#6B7280',
+                            600: '#4B5563',
+                            700: '#374151',
+                            800: '#1F2937',
+                            900: '#111827',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --primary-color: #0052D9;
+            --primary-light: #E6F0FF;
+            --sidebar-width: 240px;
+            --sidebar-collapsed: 64px;
+            --topbar-height: 64px;
+            --tab-height: 48px;
+            --breadcrumb-height: 40px;
+            --title-height: 56px;
+        }
+
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #F3F4F6;
+            overflow-x: hidden;
+        }
+
+        /* Top Bar Styles */
+        .top-bar {
+            height: var(--topbar-height);
+            background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 280px;
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 18px;
+            padding: 0 36px 0 16px;
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-box input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            outline: none;
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 18px;
+            height: 18px;
+            background: #EF4444;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .user-section:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-name {
+            color: white;
+            font-size: 14px;
+        }
+
+        /* Primary Navigation (Tab) */
+        .primary-nav {
+            height: var(--tab-height);
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            position: fixed;
+            top: var(--topbar-height);
+            left: 0;
+            right: 0;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            height: 100%;
+        }
+
+        .nav-tab {
+            padding: 0 24px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            color: #6B7280;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            position: relative;
+        }
+
+        .nav-tab:hover {
+            color: var(--primary-color);
+            background: #F9FAFB;
+        }
+
+        .nav-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background: linear-gradient(to bottom, transparent 0%, var(--primary-light) 100%);
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid #E5E7EB;
+            position: fixed;
+            top: calc(var(--topbar-height) + var(--tab-height));
+            left: 0;
+            bottom: 0;
+            z-index: 998;
+            overflow-y: auto;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            right: -12px;
+            top: 16px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+
+        .sidebar-menu {
+            padding: 16px 0;
+        }
+
+        .menu-group {
+            margin-bottom: 8px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #4B5563;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .menu-item:hover {
+            background: #F9FAFB;
+            color: var(--primary-color);
+        }
+
+        .menu-item.active {
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-right: 3px solid var(--primary-color);
+        }
+
+        .menu-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .menu-item .arrow {
+            margin-left: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #FAFBFC;
+        }
+
+        .submenu.expanded {
+            max-height: 500px;
+        }
+
+        .submenu-item {
+            padding: 10px 20px 10px 52px;
+            color: #6B7280;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .submenu-item:hover {
+            color: var(--primary-color);
+            background: rgba(0, 82, 217, 0.04);
+        }
+
+        .submenu-item.active {
+            color: var(--primary-color);
+            background: rgba(0, 82, 217, 0.08);
+            font-weight: 500;
+        }
+
+        .submenu-item::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: #9CA3AF;
+            border-radius: 50%;
+        }
+
+        .submenu-item.active::before {
+            background: var(--primary-color);
+        }
+
+        /* Main Content Area */
+        .main-container {
+            margin-left: var(--sidebar-width);
+            margin-top: calc(var(--topbar-height) + var(--tab-height));
+            min-height: calc(100vh - var(--topbar-height) - var(--tab-height));
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar.collapsed + .main-container {
+            margin-left: var(--sidebar-collapsed);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-bar {
+            height: var(--breadcrumb-height);
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 13px;
+        }
+
+        .breadcrumb-item {
+            color: #6B7280;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item:hover {
+            color: var(--primary-color);
+        }
+
+        .breadcrumb-item.active {
+            color: #1F2937;
+            font-weight: 500;
+            cursor: default;
+        }
+
+        .breadcrumb-separator {
+            margin: 0 8px;
+            color: #D1D5DB;
+        }
+
+        /* Page Header */
+        .page-header {
+            height: var(--title-height);
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .page-title-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .status-tags {
+            display: flex;
+            gap: 8px;
+        }
+
+        .status-tag {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-tag.success {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .status-tag.warning {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .status-tag.info {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1D4ED8;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4B5563;
+            border: 1px solid #D1D5DB;
+        }
+
+        .btn-secondary:hover {
+            background: #F9FAFB;
+            border-color: #9CA3AF;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 24px;
+            min-height: calc(100vh - var(--topbar-height) - var(--tab-height) - var(--breadcrumb-height) - var(--title-height));
+        }
+
+        /* Dashboard Widget Styles */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
+
+        .widget {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            overflow: hidden;
+        }
+
+        .widget-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .widget-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .widget-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .widget-action {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6B7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .widget-action:hover {
+            background: #F3F4F6;
+            color: var(--primary-color);
+        }
+
+        .widget-body {
+            padding: 20px;
+        }
+
+        .widget-col-3 {
+            grid-column: span 3;
+        }
+
+        .widget-col-4 {
+            grid-column: span 4;
+        }
+
+        .widget-col-6 {
+            grid-column: span 6;
+        }
+
+        .widget-col-8 {
+            grid-column: span 8;
+        }
+
+        .widget-col-12 {
+            grid-column: span 12;
+        }
+
+        /* Stat Card */
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-icon.blue {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        .stat-icon.green {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .stat-icon.orange {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .stat-icon.purple {
+            background: #EDE9FE;
+            color: #7C3AED;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1F2937;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6B7280;
+            margin-top: 4px;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .stat-change.up {
+            color: #059669;
+        }
+
+        .stat-change.down {
+            color: #DC2626;
+        }
+
+        /* Quick Access */
+        .quick-access-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .quick-access-item {
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-access-item:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .quick-access-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 18px;
+        }
+
+        .quick-access-title {
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        /* Todo List */
+        .todo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #F9FAFB;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .todo-item:hover {
+            background: var(--primary-light);
+        }
+
+        .todo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        .todo-content {
+            flex: 1;
+        }
+
+        .todo-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #1F2937;
+        }
+
+        .todo-meta {
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 2px;
+        }
+
+        .todo-badge {
+            padding: 2px 8px;
+            background: #FEE2E2;
+            color: #DC2626;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            height: 280px;
+            position: relative;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: #F9FAFB;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #4B5563;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .data-table tr:hover td {
+            background: #F9FAFB;
+        }
+
+        /* Scrollbar Styles */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F3F4F6;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF;
+        }
+
+        /* Responsive */
+        @media (max-width: 1280px) {
+            .widget-col-3 {
+                grid-column: span 6;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-container {
+                margin-left: 0;
+            }
+
+            .widget-col-3,
+            .widget-col-4,
+            .widget-col-6,
+            .widget-col-8 {
+                grid-column: span 12;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <header class="top-bar">
+        <div class="logo-section">
+            <div class="logo-icon">
+                <i class="fa fa-building"></i>
+            </div>
+            <span class="logo-text">深圳市BIM数据与能力中台</span>
+        </div>
+        <div class="top-actions">
+            <div class="search-box">
+                <input type="text" placeholder="搜索功能、数据、文档...">
+                <i class="fa fa-search"></i>
+            </div>
+            <div class="action-btn">
+                <i class="fa fa-bell"></i>
+                <span class="badge">3</span>
+            </div>
+            <div class="action-btn">
+                <i class="fa fa-question-circle"></i>
+            </div>
+            <div class="user-section">
+                <div class="user-avatar">管</div>
+                <span class="user-name">管理员</span>
+                <i class="fa fa-caret-down" style="color: rgba(255,255,255,0.7);"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Primary Navigation -->
+    <nav class="primary-nav">
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-module="home">
+                <i class="fa fa-home" style="margin-right: 6px;"></i>
+                平台首页
+            </div>
+            <div class="nav-tab" data-module="data">
+                <i class="fa fa-database" style="margin-right: 6px;"></i>
+                数据中台
+            </div>
+            <div class="nav-tab" data-module="capability">
+                <i class="fa fa-cogs" style="margin-right: 6px;"></i>
+                能力中台
+            </div>
+            <div class="nav-tab" data-module="share">
+                <i class="fa fa-share-alt" style="margin-right: 6px;"></i>
+                数据与能力共享中心
+            </div>
+            <div class="nav-tab" data-module="resource">
+                <i class="fa fa-folder-open" style="margin-right: 6px;"></i>
+                数据资源服务中心
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fa fa-chevron-left" id="toggleIcon"></i>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <!-- Menu items will be dynamically generated -->
+        </div>
+    </aside>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-bar">
+            <span class="breadcrumb-item" onclick="navigateTo('home')">首页</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active" id="currentPage">平台概览</span>
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-title-section">
+                <h1 class="page-title" id="pageTitle">平台概览</h1>
+                <div class="status-tags">
+                    <span class="status-tag success">运行正常</span>
+                    <span class="status-tag info">v2.0.0</span>
+                </div>
+            </div>
+            <div class="page-actions">
+                <button class="btn btn-secondary">
+                    <i class="fa fa-refresh"></i>
+                    刷新
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fa fa-plus"></i>
+                    新建
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area" id="contentArea">
+            <!-- Dashboard Content -->
+            <div class="dashboard-grid">
+                <!-- Stat Cards Row -->
+                <div class="widget-col-3">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fa fa-database"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">12,580</div>
+                            <div class="stat-label">数据资源总量</div>
+                            <div class="stat-change up">
+                                <i class="fa fa-arrow-up"></i> 12.5%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-col-3">
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fa fa-cogs"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">86</div>
+                            <div class="stat-label">能力服务数量</div>
+                            <div class="stat-change up">
+                                <i class="fa fa-arrow-up"></i> 8.3%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-col-3">
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">2,847</div>
+                            <div class="stat-label">活跃用户</div>
+                            <div class="stat-change up">
+                                <i class="fa fa-arrow-up"></i> 23.1%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-col-3">
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="fa fa-exchange"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">156.8K</div>
+                            <div class="stat-label">API调用次数</div>
+                            <div class="stat-change up">
+                                <i class="fa fa-arrow-up"></i> 45.2%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Access -->
+                <div class="widget-col-12">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <span class="widget-title">常用功能</span>
+                            <div class="widget-actions">
+                                <div class="widget-action">
+                                    <i class="fa fa-cog"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-body">
+                            <div class="quick-access-grid">
+                                <div class="quick-access-item">
+                                    <div class="quick-access-icon" style="background: #DBEAFE; color: #2563EB;">
+                                        <i class="fa fa-upload"></i>
+                                    </div>
+                                    <div class="quick-access-title">数据接入</div>
+                                </div>
+                                <div class="quick-access-item">
+                                    <div class="quick-access-icon" style="background: #D1FAE5; color: #059669;">
+                                        <i class="fa fa-check-square"></i>
+                                    </div>
+                                    <div class="quick-access-title">规范审查</div>
+                                </div>
+                                <div class="quick-access-item">
+                                    <div class="quick-access-icon" style="background: #FEF3C7; color: #D97706;">
+                                        <i class="fa fa-calculator"></i>
+                                    </div>
+                                    <div class="quick-access-title">算量管理</div>
+                                </div>
+                                <div class="quick-access-item">
+                                    <div class="quick-access-icon" style="background: #EDE9FE; color: #7C3AED;">
+                                        <i class="fa fa-eye"></i>
+                                    </div>
+                                    <div class="quick-access-title">可视化渲染</div>
+                                </div>
+                                <div class="quick-access-item">
+                                    <div class="quick-access-icon" style="background: #FCE7F3; color: #DB2777;">
+                                        <i class="fa fa-share"></i>
+                                    </div>
+                                    <div class="quick-access-title">数据共享</div>
+                                </div>
+                                <div class="quick-access-item">
+                                    <div class="quick-access-icon" style="background: #CFFAFE; color: #0891B2;">
+                                        <i class="fa fa-book"></i>
+                                    </div>
+                                    <div class="quick-access-title">知识中心</div>
+                                </div>
+                                <div class="quick-access-item">
+                                    <div class="quick-access-icon" style="background: #F3E8FF; color: #9333EA;">
+                                        <i class="fa fa-chart-line"></i>
+                                    </div>
+                                    <div class="quick-access-title">统计分析</div>
+                                </div>
+                                <div class="quick-access-item">
+                                    <div class="quick-access-icon" style="background: #FEF9C3; color: #CA8A04;">
+                                        <i class="fa fa-cog"></i>
+                                    </div>
+                                    <div class="quick-access-title">系统配置</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Platform Overview Chart -->
+                <div class="widget-col-8">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <span class="widget-title">数据中台运行概况</span>
+                            <div class="widget-actions">
+                                <div class="widget-action"><i class="fa fa-download"></i></div>
+                                <div class="widget-action"><i class="fa fa-expand"></i></div>
+                                <div class="widget-action"><i class="fa fa-ellipsis-v"></i></div>
+                            </div>
+                        </div>
+                        <div class="widget-body">
+                            <div class="chart-container">
+                                <canvas id="dataPlatformChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Todo List -->
+                <div class="widget-col-4">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <span class="widget-title">待办事项</span>
+                            <div class="widget-actions">
+                                <div class="widget-action"><i class="fa fa-ellipsis-v"></i></div>
+                            </div>
+                        </div>
+                        <div class="widget-body">
+                            <div class="todo-list">
+                                <div class="todo-item">
+                                    <div class="todo-icon">
+                                        <i class="fa fa-file-alt"></i>
+                                    </div>
+                                    <div class="todo-content">
+                                        <div class="todo-title">待审批数据接入申请</div>
+                                        <div class="todo-meta">3个申请等待审批</div>
+                                    </div>
+                                    <span class="todo-badge">3</span>
+                                </div>
+                                <div class="todo-item">
+                                    <div class="todo-icon">
+                                        <i class="fa fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="todo-content">
+                                        <div class="todo-title">数据质量异常告警</div>
+                                        <div class="todo-meta">2个数据源出现异常</div>
+                                    </div>
+                                    <span class="todo-badge">2</span>
+                                </div>
+                                <div class="todo-item">
+                                    <div class="todo-icon">
+                                        <i class="fa fa-check-circle"></i>
+                                    </div>
+                                    <div class="todo-content">
+                                        <div class="todo-title">能力服务发布审核</div>
+                                        <div class="todo-meta">1个服务待审核</div>
+                                    </div>
+                                    <span class="todo-badge">1</span>
+                                </div>
+                                <div class="todo-item">
+                                    <div class="todo-icon">
+                                        <i class="fa fa-users"></i>
+                                    </div>
+                                    <div class="todo-content">
+                                        <div class="todo-title">新用户注册审核</div>
+                                        <div class="todo-meta">5个用户待审核</div>
+                                    </div>
+                                    <span class="todo-badge">5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Capability Platform Overview -->
+                <div class="widget-col-6">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <span class="widget-title">能力中台服务调用趋势</span>
+                            <div class="widget-actions">
+                                <div class="widget-action"><i class="fa fa-download"></i></div>
+                                <div class="widget-action"><i class="fa fa-expand"></i></div>
+                            </div>
+                        </div>
+                        <div class="widget-body">
+                            <div class="chart-container">
+                                <canvas id="capabilityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="widget-col-6">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <span class="widget-title">最近动态</span>
+                            <div class="widget-actions">
+                                <div class="widget-action"><i class="fa fa-ellipsis-v"></i></div>
+                            </div>
+                        </div>
+                        <div class="widget-body">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>操作类型</th>
+                                        <th>资源名称</th>
+                                        <th>操作人</th>
+                                        <th>时间</th>
+                                        <th>状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><i class="fa fa-upload" style="color: #2563EB; margin-right: 6px;"></i>数据接入</td>
+                                        <td>建筑模型数据_v2.0</td>
+                                        <td>张三</td>
+                                        <td>2026-01-07 14:30</td>
+                                        <td><span style="color: #059669;">成功</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fa fa-cog" style="color: #7C3AED; margin-right: 6px;"></i>能力调用</td>
+                                        <td>规范审查服务</td>
+                                        <td>李四</td>
+                                        <td>2026-01-07 14:25</td>
+                                        <td><span style="color: #059669;">成功</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fa fa-share" style="color: #DB2777; margin-right: 6px;"></i>数据共享</td>
+                                        <td>市政工程数据集</td>
+                                        <td>王五</td>
+                                        <td>2026-01-07 14:20</td>
+                                        <td><span style="color: #D97706;">审批中</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fa fa-check-square" style="color: #059669; margin-right: 6px;"></i>质量检查</td>
+                                        <td>BIM模型质检</td>
+                                        <td>赵六</td>
+                                        <td>2026-01-07 14:15</td>
+                                        <td><span style="color: #059669;">通过</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fa fa-eye" style="color: #0891B2; margin-right: 6px;"></i>可视化渲染</td>
+                                        <td>3D模型渲染任务</td>
+                                        <td>钱七</td>
+                                        <td>2026-01-07 14:10</td>
+                                        <td><span style="color: #059669;">完成</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Menu Configuration - Easy to modify and extend
+        const menuConfig = {
+            home: {
+                title: '平台首页',
+                icon: 'fa-home',
+                items: [
+                    { id: 'overview', title: '平台概览', icon: 'fa-dashboard' },
+                    { id: 'workbench', title: '我的工作台', icon: 'fa-desktop' },
+                    { id: 'todo', title: '待办事项', icon: 'fa-check-square' },
+                    { id: 'message', title: '消息通知', icon: 'fa-bell' }
+                ]
+            },
+            data: {
+                title: '数据中台',
+                icon: 'fa-database',
+                items: [
+                    { 
+                        id: 'access', 
+                        title: '数据接入', 
+                        icon: 'fa-upload',
+                        children: [
+                            { id: 'access-config', title: '接入配置' },
+                            { id: 'access-task', title: '接入任务' },
+                            { id: 'access-log', title: '接入日志' }
+                        ]
+                    },
+                    { 
+                        id: 'process', 
+                        title: '数据处理', 
+                        icon: 'fa-cogs',
+                        children: [
+                            { id: 'process-flow', title: '处理流程' },
+                            { id: 'process-task', title: '处理任务' },
+                            { id: 'process-template', title: '处理模板' }
+                        ]
+                    },
+                    { 
+                        id: 'parse', 
+                        title: '数据解析', 
+                        icon: 'fa-code',
+                        children: [
+                            { id: 'parse-rule', title: '解析规则' },
+                            { id: 'parse-task', title: '解析任务' },
+                            { id: 'parse-result', title: '解析结果' }
+                        ]
+                    },
+                    { 
+                        id: 'asset', 
+                        title: '数据资产管理', 
+                        icon: 'fa-folder-open',
+                        children: [
+                            { id: 'asset-catalog', title: '资产目录' },
+                            { id: 'asset-tag', title: '资产标签' },
+                            { id: 'asset-lineage', title: '资产血缘' }
+                        ]
+                    },
+                    { 
+                        id: 'operation', 
+                        title: '数据运营管理', 
+                        icon: 'fa-chart-line',
+                        children: [
+                            { id: 'op-monitor', title: '运营监控' },
+                            { id: 'op-report', title: '运营报表' },
+                            { id: 'op-quality', title: '数据质量' }
+                        ]
+                    }
+                ]
+            },
+            capability: {
+                title: '能力中台',
+                icon: 'fa-cogs',
+                items: [
+                    { 
+                        id: 'standard', 
+                        title: '规范审查', 
+                        icon: 'fa-check-square',
+                        children: [
+                            { id: 'standard-rule', title: '审查规则' },
+                            { id: 'standard-task', title: '审查任务' },
+                            { id: 'standard-report', title: '审查报告' }
+                        ]
+                    },
+                    { 
+                        id: 'quantity', 
+                        title: '算量管理', 
+                        icon: 'fa-calculator',
+                        children: [
+                            { id: 'quantity-rule', title: '算量规则' },
+                            { id: 'quantity-task', title: '算量任务' },
+                            { id: 'quantity-result', title: '算量结果' }
+                        ]
+                    },
+                    { 
+                        id: 'indicator', 
+                        title: '指标计算', 
+                        icon: 'fa-tachometer',
+                        children: [
+                            { id: 'indicator-define', title: '指标定义' },
+                            { id: 'indicator-calc', title: '指标计算' },
+                            { id: 'indicator-analysis', title: '指标分析' }
+                        ]
+                    },
+                    { 
+                        id: 'review', 
+                        title: '图模联审', 
+                        icon: 'fa-object-group',
+                        children: [
+                            { id: 'review-task', title: '联审任务' },
+                            { id: 'review-result', title: '联审结果' },
+                            { id: 'review-report', title: '联审报告' }
+                        ]
+                    },
+                    { 
+                        id: 'render', 
+                        title: '可视化渲染', 
+                        icon: 'fa-eye',
+                        children: [
+                            { id: 'render-engine', title: '渲染引擎' },
+                            { id: 'render-task', title: '渲染任务' },
+                            { id: 'render-scene', title: '场景管理' }
+                        ]
+                    },
+                    { 
+                        id: 'visual', 
+                        title: '数据可视化', 
+                        icon: 'fa-bar-chart',
+                        children: [
+                            { id: 'visual-dashboard', title: '可视化大屏' },
+                            { id: 'visual-report', title: '报表设计' },
+                            { id: 'visual-chart', title: '图表库' }
+                        ]
+                    }
+                ]
+            },
+            share: {
+                title: '数据与能力共享中心',
+                icon: 'fa-share-alt',
+                items: [
+                    { 
+                        id: 'data-share', 
+                        title: '数据共享', 
+                        icon: 'fa-database',
+                        children: [
+                            { id: 'data-share-catalog', title: '共享目录' },
+                            { id: 'data-share-apply', title: '共享申请' },
+                            { id: 'data-share-auth', title: '共享授权' }
+                        ]
+                    },
+                    { 
+                        id: 'capability-share', 
+                        title: '能力共享', 
+                        icon: 'fa-cogs',
+                        children: [
+                            { id: 'capability-share-catalog', title: '能力目录' },
+                            { id: 'capability-share-apply', title: '能力申请' },
+                            { id: 'capability-share-auth', title: '能力授权' }
+                        ]
+                    }
+                ]
+            },
+            resource: {
+                title: '数据资源服务中心',
+                icon: 'fa-folder-open',
+                items: [
+                    { 
+                        id: 'basic-data', 
+                        title: '基础数据中心', 
+                        icon: 'fa-cube',
+                        children: [
+                            { id: 'basic-bim', title: 'BIM基础数据' },
+                            { id: 'basic-gis', title: 'GIS基础数据' },
+                            { id: 'basic-iot', title: 'IoT基础数据' }
+                        ]
+                    },
+                    { 
+                        id: 'result-data', 
+                        title: '成果数据中心', 
+                        icon: 'fa-trophy',
+                        children: [
+                            { id: 'result-design', title: '设计成果' },
+                            { id: 'result-construct', title: '施工成果' },
+                            { id: 'result-accept', title: '验收成果' }
+                        ]
+                    },
+                    { 
+                        id: 'knowledge', 
+                        title: '知识中心', 
+                        icon: 'fa-book',
+                        children: [
+                            { id: 'knowledge-doc', title: '文档库' },
+                            { id: 'knowledge-case', title: '案例库' },
+                            { id: 'knowledge-standard', title: '标准规范' }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // Current state
+        let currentModule = 'home';
+        let currentMenu = 'overview';
+        let sidebarCollapsed = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderSidebar('home');
+            initCharts();
+            bindEvents();
+        });
+
+        // Render sidebar menu
+        function renderSidebar(moduleKey) {
+            const menu = menuConfig[moduleKey];
+            const sidebarMenu = document.getElementById('sidebarMenu');
+            
+            let html = '';
+            menu.items.forEach((item, index) => {
+                const hasChildren = item.children && item.children.length > 0;
+                const isActive = item.id === currentMenu;
+                
+                html += `
+                    <div class="menu-group">
+                        <div class="menu-item ${isActive ? 'active' : ''} ${hasChildren ? 'has-children' : ''}" 
+                             data-id="${item.id}" 
+                             onclick="handleMenuClick('${item.id}', ${hasChildren}, this)">
+                            <i class="fa ${item.icon}"></i>
+                            <span>${item.title}</span>
+                            ${hasChildren ? '<i class="fa fa-chevron-right arrow"></i>' : ''}
+                        </div>
+                        ${hasChildren ? renderSubmenu(item.children, item.id) : ''}
+                    </div>
+                `;
+            });
+            
+            sidebarMenu.innerHTML = html;
+        }
+
+        // Render submenu
+        function renderSubmenu(children, parentId) {
+            let html = `<div class="submenu" id="submenu-${parentId}">`;
+            children.forEach(child => {
+                html += `
+                    <div class="submenu-item" data-parent="${parentId}" data-id="${child.id}" onclick="handleSubmenuClick('${child.id}', '${parentId}')">
+                        ${child.title}
+                    </div>
+                `;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        // Handle menu click
+        function handleMenuClick(menuId, hasChildren, element) {
+            currentMenu = menuId;
+            
+            // Update active states
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.submenu-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Toggle submenu
+            if (hasChildren) {
+                element.classList.toggle('expanded');
+                const submenu = document.getElementById(`submenu-${menuId}`);
+                submenu.classList.toggle('expanded');
+            }
+            
+            // Update breadcrumb and title
+            updatePageInfo(menuId);
+        }
+
+        // Handle submenu click
+        function handleSubmenuClick(submenuId, parentId) {
+            currentMenu = submenuId;
+            
+            // Update active states
+            document.querySelectorAll('.submenu-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update breadcrumb and title
+            updatePageInfo(submenuId, parentId);
+        }
+
+        // Update page information
+        function updatePageInfo(menuId, parentId = null) {
+            const module = menuConfig[currentModule];
+            let menuItem = module.items.find(item => item.id === menuId);
+            let title = menuItem ? menuItem.title : menuId;
+            let breadcrumb = `<span class="breadcrumb-item" onclick="navigateTo('home')">首页</span>`;
+            breadcrumb += `<span class="breadcrumb-separator">/</span>`;
+            breadcrumb += `<span class="breadcrumb-item" onclick="switchModule('${currentModule}')">${module.title}</span>`;
+            
+            if (parentId) {
+                const parentItem = module.items.find(item => item.id === parentId);
+                breadcrumb += `<span class="breadcrumb-separator">/</span>`;
+                breadcrumb += `<span class="breadcrumb-item">${parentItem.title}</span>`;
+                title = parentItem.children.find(child => child.id === menuId).title;
+            }
+            
+            breadcrumb += `<span class="breadcrumb-separator">/</span>`;
+            breadcrumb += `<span class="breadcrumb-item active">${title}</span>`;
+            
+            document.getElementById('currentPage').outerHTML = breadcrumb;
+            document.getElementById('pageTitle').textContent = title;
+        }
+
+        // Switch module (top tab)
+        function switchModule(moduleKey) {
+            currentModule = moduleKey;
+            currentMenu = menuConfig[moduleKey].items[0].id;
+            
+            // Update tab active state
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.module === moduleKey) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Re-render sidebar
+            renderSidebar(moduleKey);
+            
+            // Update page info
+            updatePageInfo(currentMenu);
+        }
+
+        // Navigate to
+        function navigateTo(page) {
+            if (page === 'home') {
+                switchModule('home');
+            }
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            sidebarCollapsed = !sidebarCollapsed;
+            const sidebar = document.getElementById('sidebar');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                toggleIcon.classList.remove('fa-chevron-left');
+                toggleIcon.classList.add('fa-chevron-right');
+            } else {
+                sidebar.classList.remove('collapsed');
+                toggleIcon.classList.remove('fa-chevron-right');
+                toggleIcon.classList.add('fa-chevron-left');
+            }
+        }
+
+        // Bind events
+        function bindEvents() {
+            // Tab click events
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    switchModule(this.dataset.module);
+                });
+            });
+        }
+
+        // Initialize charts
+        function initCharts() {
+            // Data Platform Chart
+            const dataCtx = document.getElementById('dataPlatformChart').getContext('2d');
+            new Chart(dataCtx, {
+                type: 'line',
+                data: {
+                    labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                    datasets: [{
+                        label: '数据接入量',
+                        data: [1200, 1900, 1500, 2200, 1800, 2800, 2500],
+                        borderColor: '#0052D9',
+                        backgroundColor: 'rgba(0, 82, 217, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: '数据处理量',
+                        data: [800, 1200, 1100, 1600, 1400, 2000, 1800],
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'end',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#F3F4F6'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Capability Chart
+            const capCtx = document.getElementById('capabilityChart').getContext('2d');
+            new Chart(capCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['规范审查', '算量管理', '指标计算', '图模联审', '可视化渲染', '数据可视化'],
+                    datasets: [{
+                        label: '调用次数',
+                        data: [3200, 2800, 2100, 1800, 3500, 2400],
+                        backgroundColor: [
+                            '#0052D9',
+                            '#3B82F6',
+                            '#60A5FA',
+                            '#93C5FD',
+                            '#2563EB',
+                            '#1D4ED8'
+                        ],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#F3F4F6'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
