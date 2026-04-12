@@ -1279,9 +1279,10 @@
                         title: '数据接入', 
                         icon: 'fa-upload',
                         children: [
-                            { id: 'access-config', title: '接入配置' },
-                            { id: 'access-task', title: '接入任务' },
-                            { id: 'access-log', title: '接入日志' }
+                            { id: 'access-approval', title: '报建数据汇集' },
+                            { id: 'access-component', title: '通用构件汇集' },
+                            { id: 'access-iot', title: 'IoT数据接入' },
+                            { id: 'access-ledger', title: '数据归集台账' }
                         ]
                     },
                     { 
@@ -1500,7 +1501,7 @@
             let html = `<div class="submenu" id="submenu-${parentId}">`;
             children.forEach(child => {
                 html += `
-                    <div class="submenu-item" data-parent="${parentId}" data-id="${child.id}" onclick="handleSubmenuClick('${child.id}', '${parentId}')">
+                    <div class="submenu-item" data-parent="${parentId}" data-id="${child.id}" onclick="handleSubmenuClick('${child.id}', '${parentId}', event)">
                         ${child.title}
                     </div>
                 `;
@@ -1530,7 +1531,7 @@
         }
 
         // Handle submenu click
-        function handleSubmenuClick(submenuId, parentId) {
+        function handleSubmenuClick(submenuId, parentId, event) {
             currentMenu = submenuId;
             
             // Update active states
@@ -1562,6 +1563,879 @@
             
             document.getElementById('currentPage').outerHTML = breadcrumb;
             document.getElementById('pageTitle').textContent = title;
+            
+            // Render page content based on menu
+            renderPageContent(menuId, parentId);
+        }
+        
+        // Render page content
+        function renderPageContent(menuId, parentId = null) {
+            const contentArea = document.getElementById('contentArea');
+            
+            // 报建数据汇集页面
+            if (menuId === 'access-approval' && parentId === 'access') {
+                contentArea.innerHTML = `
+                    <div class="dashboard-grid">
+                        <!-- 工程类型标签页 -->
+                        <div class="widget-col-12">
+                            <div class="widget">
+                                <div class="widget-body">
+                                    <div class="flex border-b border-gray-200 mb-4">
+                                        <button class="px-6 py-3 text-sm font-medium text-primary border-b-2 border-primary">房建工程</button>
+                                        <button class="px-6 py-3 text-sm font-medium text-gray-500 hover:text-primary">市政工程</button>
+                                        <button class="px-6 py-3 text-sm font-medium text-gray-500 hover:text-primary">水务工程</button>
+                                    </div>
+                                    
+                                    <!-- 搜索和筛选区域 -->
+                                    <div class="bg-white p-4 rounded-lg border border-gray-200 mb-4">
+                                        <div class="flex flex-wrap items-center gap-4">
+                                            <div class="flex-grow">
+                                                <div class="relative">
+                                                    <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                                    <input type="text" placeholder="搜索报建数据名称/项目编码..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-4">
+                                                <select class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                                    <option>行政区划</option>
+                                                    <option>南山区</option>
+                                                    <option>福田区</option>
+                                                </select>
+                                                <select class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                                    <option>主管部门</option>
+                                                    <option>市住建局</option>
+                                                    <option>区工务局</option>
+                                                </select>
+                                                <select class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                                    <option>模型来源</option>
+                                                    <option>设计审查</option>
+                                                    <option>施工审查</option>
+                                                </select>
+                                                <select class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                                    <option>项目阶段</option>
+                                                    <option>施工图阶段</option>
+                                                    <option>工程规划许可和报建审批阶段</option>
+                                                </select>
+                                                <button class="btn btn-secondary">
+                                                    <i class="fa fa-refresh"></i>
+                                                    重置
+                                                </button>
+                                                <button class="btn btn-primary">
+                                                    <i class="fa fa-plus"></i>
+                                                    新建归集
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 数据表格 -->
+                                    <div class="overflow-x-auto">
+                                        <table class="min-w-full bg-white border border-gray-200">
+                                            <thead>
+                                                <tr class="bg-gray-50">
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">序号</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">工程名称</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目名称</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目编码</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">行政区划</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">主管部门</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">模型来源</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目阶段</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-200">
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">前海湾合作区项目</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">前海小学扩建工程</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">SZ-2024-H-001</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">南山区</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">市住建局</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <span class="flex items-center text-blue-600">
+                                                            <i class="fa fa-file-pdf-o mr-1"></i>
+                                                            施工审查
+                                                        </span>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <a href="#" class="text-blue-600 hover:underline">施工图阶段</a>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <div class="flex space-x-2">
+                                                            <button class="text-blue-600 hover:text-blue-800">
+                                                                <i class="fa fa-pencil"></i>
+                                                            </button>
+                                                            <button class="text-red-600 hover:text-red-800">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">深圳市体育中心改造工程</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">体育场馆单体楼</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">SZ-2024-H-042</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">福田区</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">区工务局</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <span class="flex items-center text-blue-600">
+                                                            <i class="fa fa-file-pdf-o mr-1"></i>
+                                                            设计审查
+                                                        </span>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <a href="#" class="text-blue-600 hover:underline">工程规划许可和报建审批阶段</a>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <div class="flex space-x-2">
+                                                            <button class="text-blue-600 hover:text-blue-800">
+                                                                <i class="fa fa-pencil"></i>
+                                                            </button>
+                                                            <button class="text-red-600 hover:text-red-800">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Data Access Overview Page
+            if (menuId === 'access' && !parentId) {
+                contentArea.innerHTML = `
+                    <div class="dashboard-grid">
+                        <!-- Page Introduction -->
+                        <div class="widget-col-12">
+                            <div class="widget">
+                                <div class="widget-body">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                        <div>
+                                            <h2 class="text-20 font-semibold text-dark mb-2">数据接入</h2>
+                                            <p class="text-gray-600">用于统一接入BIM模型、图纸、倾斜摄影、项目资料、IoT等多源数据，为平台能力应用提供数据底座。</p>
+                                        </div>
+                                        <div class="flex gap-4">
+                                            <button class="btn btn-primary">
+                                                <i class="fa fa-plus"></i>
+                                                新建数据接入任务
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fa fa-file-text-o"></i>
+                                                查看接入规范
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Data Access Overview -->
+                        <div class="widget-col-3">
+                            <div class="stat-card">
+                                <div class="stat-icon blue">
+                                    <i class="fa fa-building"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-value">1,247</div>
+                                    <div class="stat-label">已接入项目数量</div>
+                                    <div class="stat-change up">
+                                        <i class="fa fa-arrow-up"></i> 15.2%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-col-3">
+                            <div class="stat-card">
+                                <div class="stat-icon green">
+                                    <i class="fa fa-cube"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-value">8,756</div>
+                                    <div class="stat-label">模型数据数量</div>
+                                    <div class="stat-change up">
+                                        <i class="fa fa-arrow-up"></i> 8.7%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-col-3">
+                            <div class="stat-card">
+                                <div class="stat-icon orange">
+                                    <i class="fa fa-file-image-o"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-value">12,345</div>
+                                    <div class="stat-label">图纸数据数量</div>
+                                    <div class="stat-change up">
+                                        <i class="fa fa-arrow-up"></i> 12.3%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-col-3">
+                            <div class="stat-card">
+                                <div class="stat-icon purple">
+                                    <i class="fa fa-camera"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-value">3,456</div>
+                                    <div class="stat-label">倾斜摄影数据数量</div>
+                                    <div class="stat-change up">
+                                        <i class="fa fa-arrow-up"></i> 6.8%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-col-3">
+                            <div class="stat-card">
+                                <div class="stat-icon blue">
+                                    <i class="fa fa-file-o"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-value">25,678</div>
+                                    <div class="stat-label">资料文件数量</div>
+                                    <div class="stat-change up">
+                                        <i class="fa fa-arrow-up"></i> 9.5%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-col-3">
+                            <div class="stat-card">
+                                <div class="stat-icon green">
+                                    <i class="fa fa-wifi"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-value">1,890</div>
+                                    <div class="stat-label">IoT设备接入数量</div>
+                                    <div class="stat-change up">
+                                        <i class="fa fa-arrow-up"></i> 23.4%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon orange">
+                                    <i class="fa fa-database"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-value">51,322</div>
+                                    <div class="stat-label">总数据接入量</div>
+                                    <div class="stat-change up">
+                                        <i class="fa fa-arrow-up"></i> 11.2%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Function Entries -->
+                        <div class="widget-col-12">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <span class="widget-title">功能入口</span>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                        <!-- 报建数据归集 -->
+                                        <div class="border border-gray-200 rounded-lg p-6 hover:border-primary transition-all-300">
+                                            <div class="flex items-start justify-between mb-4">
+                                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                    <i class="fa fa-file-text-o text-primary text-xl"></i>
+                                                </div>
+                                                <button class="btn btn-secondary btn-sm">
+                                                    <i class="fa fa-arrow-right"></i>
+                                                </button>
+                                            </div>
+                                            <h3 class="text-lg font-medium mb-2">报建数据归集</h3>
+                                            <p class="text-gray-600 text-sm mb-4">负责归集和管理报建阶段的BIM相关数据，包括模型、图纸等资料。</p>
+                                            <div class="flex items-center text-sm text-gray-500">
+                                                <span class="mr-4"><i class="fa fa-file-o mr-1"></i> 1,247 个项目</span>
+                                                <span><i class="fa fa-check-circle-o mr-1"></i> 98% 完成率</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 通用构件汇集 -->
+                                        <div class="border border-gray-200 rounded-lg p-6 hover:border-primary transition-all-300">
+                                            <div class="flex items-start justify-between mb-4">
+                                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                                    <i class="fa fa-cubes text-green-500 text-xl"></i>
+                                                </div>
+                                                <button class="btn btn-secondary btn-sm">
+                                                    <i class="fa fa-arrow-right"></i>
+                                                </button>
+                                            </div>
+                                            <h3 class="text-lg font-medium mb-2">通用构件汇集</h3>
+                                            <p class="text-gray-600 text-sm mb-4">收集和管理各类通用BIM构件，建立标准化构件库，支持快速复用。</p>
+                                            <div class="flex items-center text-sm text-gray-500">
+                                                <span class="mr-4"><i class="fa fa-cube mr-1"></i> 8,756 个构件</span>
+                                                <span><i class="fa fa-check-circle-o mr-1"></i> 95% 完成率</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- IoT数据接入 -->
+                                        <div class="border border-gray-200 rounded-lg p-6 hover:border-primary transition-all-300">
+                                            <div class="flex items-start justify-between mb-4">
+                                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                    <i class="fa fa-wifi text-purple-500 text-xl"></i>
+                                                </div>
+                                                <button class="btn btn-secondary btn-sm">
+                                                    <i class="fa fa-arrow-right"></i>
+                                                </button>
+                                            </div>
+                                            <h3 class="text-lg font-medium mb-2">IoT数据接入</h3>
+                                            <p class="text-gray-600 text-sm mb-4">接入和管理物联网设备数据，实现设备状态监控和数据采集。</p>
+                                            <div class="flex items-center text-sm text-gray-500">
+                                                <span class="mr-4"><i class="fa fa-wifi mr-1"></i> 1,890 个设备</span>
+                                                <span><i class="fa fa-check-circle-o mr-1"></i> 92% 在线率</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 数据归集台账 -->
+                                        <div class="border border-gray-200 rounded-lg p-6 hover:border-primary transition-all-300">
+                                            <div class="flex items-start justify-between mb-4">
+                                                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                                    <i class="fa fa-table text-orange-500 text-xl"></i>
+                                                </div>
+                                                <button class="btn btn-secondary btn-sm">
+                                                    <i class="fa fa-arrow-right"></i>
+                                                </button>
+                                            </div>
+                                            <h3 class="text-lg font-medium mb-2">数据归集台账</h3>
+                                            <p class="text-gray-600 text-sm mb-4">记录和管理所有数据接入的详细信息，包括来源、类型、状态等。</p>
+                                            <div class="flex items-center text-sm text-gray-500">
+                                                <span class="mr-4"><i class="fa fa-file-text-o mr-1"></i> 51,322 条记录</span>
+                                                <span><i class="fa fa-check-circle-o mr-1"></i> 100% 完整率</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Data Access Process -->
+                        <div class="widget-col-12">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <span class="widget-title">数据接入流程</span>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="flex flex-col md:flex-row items-center justify-between gap-4 py-8">
+                                        <div class="flex flex-col items-center text-center">
+                                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                <i class="fa fa-upload text-primary text-2xl"></i>
+                                            </div>
+                                            <h4 class="font-medium mb-2">多源数据接入</h4>
+                                            <p class="text-sm text-gray-600 max-w-xs">接入BIM模型、图纸、倾斜摄影、IoT等多源数据</p>
+                                        </div>
+                                        <div class="hidden md:block text-gray-400">
+                                            <i class="fa fa-arrow-right text-2xl"></i>
+                                        </div>
+                                        <div class="hidden md:block text-gray-400">
+                                            <i class="fa fa-arrow-down text-2xl"></i>
+                                        </div>
+                                        <div class="flex flex-col items-center text-center">
+                                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                                                <i class="fa fa-cogs text-green-500 text-2xl"></i>
+                                            </div>
+                                            <h4 class="font-medium mb-2">数据处理</h4>
+                                            <p class="text-sm text-gray-600 max-w-xs">对接入的数据进行清洗、转换、整合等处理</p>
+                                        </div>
+                                        <div class="hidden md:block text-gray-400">
+                                            <i class="fa fa-arrow-right text-2xl"></i>
+                                        </div>
+                                        <div class="hidden md:block text-gray-400">
+                                            <i class="fa fa-arrow-down text-2xl"></i>
+                                        </div>
+                                        <div class="flex flex-col items-center text-center">
+                                            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                                                <i class="fa fa-code text-purple-500 text-2xl"></i>
+                                            </div>
+                                            <h4 class="font-medium mb-2">数据解析</h4>
+                                            <p class="text-sm text-gray-600 max-w-xs">解析数据结构，提取关键信息和属性</p>
+                                        </div>
+                                        <div class="hidden md:block text-gray-400">
+                                            <i class="fa fa-arrow-right text-2xl"></i>
+                                        </div>
+                                        <div class="hidden md:block text-gray-400">
+                                            <i class="fa fa-arrow-down text-2xl"></i>
+                                        </div>
+                                        <div class="flex flex-col items-center text-center">
+                                            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                                                <i class="fa fa-folder-open text-orange-500 text-2xl"></i>
+                                            </div>
+                                            <h4 class="font-medium mb-2">数据资产管理</h4>
+                                            <p class="text-sm text-gray-600 max-w-xs">建立数据资产目录，进行分类和管理</p>
+                                        </div>
+                                        <div class="hidden md:block text-gray-400">
+                                            <i class="fa fa-arrow-right text-2xl"></i>
+                                        </div>
+                                        <div class="hidden md:block text-gray-400">
+                                            <i class="fa fa-arrow-down text-2xl"></i>
+                                        </div>
+                                        <div class="flex flex-col items-center text-center">
+                                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                <i class="fa fa-chart-line text-blue-500 text-2xl"></i>
+                                            </div>
+                                            <h4 class="font-medium mb-2">数据运营管理</h4>
+                                            <p class="text-sm text-gray-600 max-w-xs">监控数据质量，分析数据使用情况</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Access Records -->
+                        <div class="widget-col-12">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <span class="widget-title">近期接入动态</span>
+                                    <div class="widget-actions">
+                                        <div class="widget-action">
+                                            <i class="fa fa-refresh"></i>
+                                        </div>
+                                        <div class="widget-action">
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="overflow-x-auto">
+                                        <table class="data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>项目名称</th>
+                                                    <th>接入类型</th>
+                                                    <th>数据量</th>
+                                                    <th>接入时间</th>
+                                                    <th>操作人</th>
+                                                    <th>状态</th>
+                                                    <th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>深圳市市民中心改造项目</td>
+                                                    <td><span class="px-2 py-1 bg-blue-100 text-blue-600 rounded text-xs">模型数据</span></td>
+                                                    <td>1.2 GB</td>
+                                                    <td>2026-04-12 09:30</td>
+                                                    <td>张三</td>
+                                                    <td><span style="color: #059669;">成功</span></td>
+                                                    <td>
+                                                        <button class="text-primary hover:underline text-sm">查看</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>深圳湾体育中心扩建工程</td>
+                                                    <td><span class="px-2 py-1 bg-green-100 text-green-600 rounded text-xs">图纸数据</span></td>
+                                                    <td>560 MB</td>
+                                                    <td>2026-04-11 16:45</td>
+                                                    <td>李四</td>
+                                                    <td><span style="color: #059669;">成功</span></td>
+                                                    <td>
+                                                        <button class="text-primary hover:underline text-sm">查看</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>深圳市地铁12号线</td>
+                                                    <td><span class="px-2 py-1 bg-purple-100 text-purple-600 rounded text-xs">倾斜摄影</span></td>
+                                                    <td>8.7 GB</td>
+                                                    <td>2026-04-11 14:20</td>
+                                                    <td>王五</td>
+                                                    <td><span style="color: #059669;">成功</span></td>
+                                                    <td>
+                                                        <button class="text-primary hover:underline text-sm">查看</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>深圳市图书馆新馆</td>
+                                                    <td><span class="px-2 py-1 bg-orange-100 text-orange-600 rounded text-xs">IoT数据</span></td>
+                                                    <td>120 MB</td>
+                                                    <td>2026-04-10 11:15</td>
+                                                    <td>赵六</td>
+                                                    <td><span style="color: #D97706;">处理中</span></td>
+                                                    <td>
+                                                        <button class="text-primary hover:underline text-sm">查看</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>深圳市博物馆</td>
+                                                    <td><span class="px-2 py-1 bg-blue-100 text-blue-600 rounded text-xs">模型数据</span></td>
+                                                    <td>2.3 GB</td>
+                                                    <td>2026-04-10 09:00</td>
+                                                    <td>钱七</td>
+                                                    <td><span style="color: #059669;">成功</span></td>
+                                                    <td>
+                                                        <button class="text-primary hover:underline text-sm">查看</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Common Operations -->
+                        <div class="widget-col-12">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <span class="widget-title">常用操作</span>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                        <button class="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-primary-light transition-all-300">
+                                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mb-2">
+                                                <i class="fa fa-plus text-primary"></i>
+                                            </div>
+                                            <span class="text-sm font-medium">新建数据接入任务</span>
+                                        </button>
+                                        <button class="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-primary-light transition-all-300">
+                                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mb-2">
+                                                <i class="fa fa-table text-green-500"></i>
+                                            </div>
+                                            <span class="text-sm font-medium">查看接入台账</span>
+                                        </button>
+                                        <button class="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-primary-light transition-all-300">
+                                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mb-2">
+                                                <i class="fa fa-file-text-o text-purple-500"></i>
+                                            </div>
+                                            <span class="text-sm font-medium">查看接入规范</span>
+                                        </button>
+                                        <button class="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-primary-light transition-all-300">
+                                            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mb-2">
+                                                <i class="fa fa-cube text-orange-500"></i>
+                                            </div>
+                                            <span class="text-sm font-medium">进入模型归集</span>
+                                        </button>
+                                        <button class="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-primary-light transition-all-300">
+                                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mb-2">
+                                                <i class="fa fa-wifi text-blue-500"></i>
+                                            </div>
+                                            <span class="text-sm font-medium">进入IoT数据接入</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentModule === 'home' && menuId === 'overview') {
+                // Default dashboard content
+                contentArea.innerHTML = `
+                    <!-- Dashboard Content -->
+                    <div class="dashboard-grid">
+                        <!-- Stat Cards Row -->
+                        <div class="widget-col-3">
+                            <div class="stat-card">
+                                <div class="stat-icon blue">
+                                    <i class="fa fa-database"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-value">12,580</div>
+                                    <div class="stat-label">数据资源总量</div>
+                                    <div class="stat-change up">
+                                        <i class="fa fa-arrow-up"></i> 12.5%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-col-3">
+                            <div class="stat-card">
+                                <div class="stat-icon green">
+                                    <i class="fa fa-cogs"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-value">86</div>
+                                    <div class="stat-label">能力服务数量</div>
+                                    <div class="stat-change up">
+                                        <i class="fa fa-arrow-up"></i> 8.3%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-col-3">
+                            <div class="stat-card">
+                                <div class="stat-icon orange">
+                                    <i class="fa fa-users"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-value">2,847</div>
+                                    <div class="stat-label">活跃用户</div>
+                                    <div class="stat-change up">
+                                        <i class="fa fa-arrow-up"></i> 23.1%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-col-3">
+                            <div class="stat-card">
+                                <div class="stat-icon purple">
+                                    <i class="fa fa-exchange"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-value">156.8K</div>
+                                    <div class="stat-label">API调用次数</div>
+                                    <div class="stat-change up">
+                                        <i class="fa fa-arrow-up"></i> 45.2%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Access -->
+                        <div class="widget-col-12">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <span class="widget-title">常用功能</span>
+                                    <div class="widget-actions">
+                                        <div class="widget-action">
+                                            <i class="fa fa-cog"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="quick-access-grid">
+                                        <div class="quick-access-item">
+                                            <div class="quick-access-icon" style="background: #DBEAFE; color: #2563EB;">
+                                                <i class="fa fa-upload"></i>
+                                            </div>
+                                            <div class="quick-access-title">数据接入</div>
+                                        </div>
+                                        <div class="quick-access-item">
+                                            <div class="quick-access-icon" style="background: #D1FAE5; color: #059669;">
+                                                <i class="fa fa-check-square"></i>
+                                            </div>
+                                            <div class="quick-access-title">规范审查</div>
+                                        </div>
+                                        <div class="quick-access-item">
+                                            <div class="quick-access-icon" style="background: #FEF3C7; color: #D97706;">
+                                                <i class="fa fa-calculator"></i>
+                                            </div>
+                                            <div class="quick-access-title">算量管理</div>
+                                        </div>
+                                        <div class="quick-access-item">
+                                            <div class="quick-access-icon" style="background: #EDE9FE; color: #7C3AED;">
+                                                <i class="fa fa-eye"></i>
+                                            </div>
+                                            <div class="quick-access-title">可视化渲染</div>
+                                        </div>
+                                        <div class="quick-access-item">
+                                            <div class="quick-access-icon" style="background: #FCE7F3; color: #DB2777;">
+                                                <i class="fa fa-share"></i>
+                                            </div>
+                                            <div class="quick-access-title">数据共享</div>
+                                        </div>
+                                        <div class="quick-access-item">
+                                            <div class="quick-access-icon" style="background: #CFFAFE; color: #0891B2;">
+                                                <i class="fa fa-book"></i>
+                                            </div>
+                                            <div class="quick-access-title">知识中心</div>
+                                        </div>
+                                        <div class="quick-access-item">
+                                            <div class="quick-access-icon" style="background: #F3E8FF; color: #9333EA;">
+                                                <i class="fa fa-chart-line"></i>
+                                            </div>
+                                            <div class="quick-access-title">统计分析</div>
+                                        </div>
+                                        <div class="quick-access-item">
+                                            <div class="quick-access-icon" style="background: #FEF9C3; color: #CA8A04;">
+                                                <i class="fa fa-cog"></i>
+                                            </div>
+                                            <div class="quick-access-title">系统配置</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Platform Overview Chart -->
+                        <div class="widget-col-8">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <span class="widget-title">数据中台运行概况</span>
+                                    <div class="widget-actions">
+                                        <div class="widget-action"><i class="fa fa-download"></i></div>
+                                        <div class="widget-action"><i class="fa fa-expand"></i></div>
+                                        <div class="widget-action"><i class="fa fa-ellipsis-v"></i></div>
+                                    </div>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="chart-container">
+                                        <canvas id="dataPlatformChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Todo List -->
+                        <div class="widget-col-4">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <span class="widget-title">待办事项</span>
+                                    <div class="widget-actions">
+                                        <div class="widget-action"><i class="fa fa-ellipsis-v"></i></div>
+                                    </div>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="todo-list">
+                                        <div class="todo-item">
+                                            <div class="todo-icon">
+                                                <i class="fa fa-file-alt"></i>
+                                            </div>
+                                            <div class="todo-content">
+                                                <div class="todo-title">待审批数据接入申请</div>
+                                                <div class="todo-meta">3个申请等待审批</div>
+                                            </div>
+                                            <span class="todo-badge">3</span>
+                                        </div>
+                                        <div class="todo-item">
+                                            <div class="todo-icon">
+                                                <i class="fa fa-exclamation-triangle"></i>
+                                            </div>
+                                            <div class="todo-content">
+                                                <div class="todo-title">数据质量异常告警</div>
+                                                <div class="todo-meta">2个数据源出现异常</div>
+                                            </div>
+                                            <span class="todo-badge">2</span>
+                                        </div>
+                                        <div class="todo-item">
+                                            <div class="todo-icon">
+                                                <i class="fa fa-check-circle"></i>
+                                            </div>
+                                            <div class="todo-content">
+                                                <div class="todo-title">能力服务发布审核</div>
+                                                <div class="todo-meta">1个服务待审核</div>
+                                            </div>
+                                            <span class="todo-badge">1</span>
+                                        </div>
+                                        <div class="todo-item">
+                                            <div class="todo-icon">
+                                                <i class="fa fa-users"></i>
+                                            </div>
+                                            <div class="todo-content">
+                                                <div class="todo-title">新用户注册审核</div>
+                                                <div class="todo-meta">5个用户待审核</div>
+                                            </div>
+                                            <span class="todo-badge">5</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Capability Platform Overview -->
+                        <div class="widget-col-6">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <span class="widget-title">能力中台服务调用趋势</span>
+                                    <div class="widget-actions">
+                                        <div class="widget-action"><i class="fa fa-download"></i></div>
+                                        <div class="widget-action"><i class="fa fa-expand"></i></div>
+                                    </div>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="chart-container">
+                                        <canvas id="capabilityChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="widget-col-6">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <span class="widget-title">最近动态</span>
+                                    <div class="widget-actions">
+                                        <div class="widget-action"><i class="fa fa-ellipsis-v"></i></div>
+                                    </div>
+                                </div>
+                                <div class="widget-body">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>操作类型</th>
+                                                <th>资源名称</th>
+                                                <th>操作人</th>
+                                                <th>时间</th>
+                                                <th>状态</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><i class="fa fa-upload" style="color: #2563EB; margin-right: 6px;"></i>数据接入</td>
+                                                <td>建筑模型数据_v2.0</td>
+                                                <td>张三</td>
+                                                <td>2026-01-07 14:30</td>
+                                                <td><span style="color: #059669;">成功</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="fa fa-cog" style="color: #7C3AED; margin-right: 6px;"></i>能力调用</td>
+                                                <td>规范审查服务</td>
+                                                <td>李四</td>
+                                                <td>2026-01-07 14:25</td>
+                                                <td><span style="color: #059669;">成功</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="fa fa-share" style="color: #DB2777; margin-right: 6px;"></i>数据共享</td>
+                                                <td>市政工程数据集</td>
+                                                <td>王五</td>
+                                                <td>2026-01-07 14:20</td>
+                                                <td><span style="color: #D97706;">审批中</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="fa fa-check-square" style="color: #059669; margin-right: 6px;"></i>质量检查</td>
+                                                <td>BIM模型质检</td>
+                                                <td>赵六</td>
+                                                <td>2026-01-07 14:15</td>
+                                                <td><span style="color: #059669;">通过</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="fa fa-eye" style="color: #0891B2; margin-right: 6px;"></i>可视化渲染</td>
+                                                <td>3D模型渲染任务</td>
+                                                <td>钱七</td>
+                                                <td>2026-01-07 14:10</td>
+                                                <td><span style="color: #059669;">成功</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                // Reinitialize charts for dashboard
+                initCharts();
+            } else {
+                // Default content for other pages
+                contentArea.innerHTML = `
+                    <div class="dashboard-grid">
+                        <div class="widget-col-12">
+                            <div class="widget">
+                                <div class="widget-body">
+                                    <div class="flex flex-col items-center justify-center py-16">
+                                        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                            <i class="fa fa-folder-open text-gray-400 text-3xl"></i>
+                                        </div>
+                                        <h3 class="text-lg font-medium mb-2">${document.getElementById('pageTitle').textContent}</h3>
+                                        <p class="text-gray-500 text-center max-w-md">功能开发中，敬请期待...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         // Switch module (top tab)
